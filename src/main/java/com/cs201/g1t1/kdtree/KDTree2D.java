@@ -61,7 +61,6 @@ public class KDTree2D extends KDTree {
     @Override
     protected void updateRegions() {
         KDTree2DNode root = validateNode(super.getRoot());
-        logger.info("" + root.getCoords()[0] + "," + root.getCoords()[1]);
         root.specialUpdateRectangle();
     }
 
@@ -83,15 +82,19 @@ public class KDTree2D extends KDTree {
 
         if (range.contains(validateNode(node.getLeftNode()).getRegion())) {
             // report subtree at node.getLeftNode()
+            logger.info("region of left child fully contained in query range");
             found.addAll(reportSubtree(validateNode(node.getLeftNode())));
         } else if (range.intersects(validateNode(node.getLeftNode()).getRegion())) {
+            logger.info("region of left child intersects query range");
             rangeQuery(range, validateNode(node.getLeftNode()), found);
         }
 
         if (range.contains(validateNode(node.getRightNode()).getRegion())) {
             // report subtree at node.getRightNode()
+            logger.info("region of right child fully contained in query range");
             found.addAll(reportSubtree(validateNode(node.getRightNode())));
         } else if (range.intersects(validateNode(node.getRightNode()).getRegion())) {
+            logger.info("region of right child intersects query range");
             rangeQuery(range, validateNode(node.getRightNode()), found);
         }
     }
@@ -102,8 +105,12 @@ public class KDTree2D extends KDTree {
         return snapshot;
     }
 
-    public void inorderTraversal(KDTree2DNode<? extends Dimensional> node,
+    private void inorderTraversal(KDTree2DNode<? extends Dimensional> node,
             Set<KDTree2DNode<? extends Dimensional>> snapshot) {
+        if (node == null) {
+            return;
+        }
+        
         inorderTraversal(validateNode(node.getLeftNode()), snapshot);
         snapshot.add(node);
         inorderTraversal(validateNode(node.getRightNode()), snapshot);
@@ -119,7 +126,7 @@ public class KDTree2D extends KDTree {
 
         @Override
         public int compare(Dimensional o1, Dimensional o2) {
-            return o1.getCoords()[axis].compareTo(o1.getCoords()[axis]);
+            return o1.getCoords()[axis].compareTo(o2.getCoords()[axis]);
         }
 
     }
@@ -158,11 +165,17 @@ public class KDTree2D extends KDTree {
         final KDTree2DNode rightChild = length > 1 ? validateNodeAllowNull(buildRecursive(afterMedianPoints, depth + 1))
                 : null;
 
-        logger.info("" + medianPoint.getCoords()[0] + "," + medianPoint.getCoords()[1]);
-        logger.info("***************************************************");
-
         // Set the root of the subtree
         return new KDTree2DNode<>(null, leftChild, rightChild, medianPoint, depth, axis);
+    }
+
+    public void preorderTraversal(KDTree2DNode<? extends Dimensional> node) {
+        if (node != null) {
+            logger.info("*" + node.getElement().getCoords()[0] + "," + node.getElement().getCoords()[1] + "*");
+            logger.info("Region: " + node.getRegion().toString());
+            preorderTraversal((KDTree2DNode) node.getLeftNode());
+            preorderTraversal((KDTree2DNode) node.getRightNode());
+        }
     }
 
 }

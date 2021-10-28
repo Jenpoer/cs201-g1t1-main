@@ -33,39 +33,26 @@ public class KDTree2DNode<T extends Dimensional> extends KDTreeNode<T> {
     }
 
     private void split(KDTree2DNode<T> child, boolean isLeftChild) {
-        logger.info("Current: " + this.getCoords()[0] + "," + this.getCoords()[1]);
         if (super.getAxis() == 0) {
             if (isLeftChild) {
                 // Bound the right part
-                logger.info("Left child of x node");
-                utilChecker(this.region.getXMin(), this.region.getYMin(), this.getCoords()[0], this.region.getYMax());
-                logger.info("Child: " + child.getCoords()[0] + "," + child.getCoords()[1]);
                 child.region = new Rectangle(this.region.getXMin(), this.region.getYMin(), this.getCoords()[0],
                         this.region.getYMax());
             } else {
                 // Bound the left part
-                logger.info("Right child of x node");
-                utilChecker(this.getCoords()[0], this.region.getYMin(), this.region.getXMax(), this.region.getYMax());
-                logger.info("Child: " + child.getCoords()[0] + "," + child.getCoords()[1]);
                 child.region = new Rectangle(this.getCoords()[0], this.region.getYMin(), this.region.getXMax(),
                         this.region.getYMax());
             }
         } else {
             if (isLeftChild) {
                 // Bound the top(?) part
-                logger.info("Left child of y node");
-                utilChecker(this.region.getXMin(), this.getCoords()[1], this.region.getXMax(), this.region.getYMax());
-                logger.info("Child: " + child.getCoords()[0] + "," + child.getCoords()[1]);
-                child.region = new Rectangle(this.region.getXMin(), this.getCoords()[1], this.region.getXMax(),
-                        this.region.getYMax());
+                child.region = new Rectangle(this.region.getXMin(), this.region.getYMin(), this.region.getXMax(),
+                        this.getCoords()[1]);
 
             } else {
                 // Bound the bottom(?) part
-                logger.info("Right child of y node");
-                utilChecker(this.region.getXMin(), this.region.getYMin(), this.region.getXMax(), this.getCoords()[1]);
-                logger.info("Child: " + this.getCoords()[0] + "," + this.getCoords()[1]);
-                child.region = new Rectangle(this.region.getXMin(), this.region.getYMin(), this.region.getXMax(),
-                        this.getCoords()[1]);
+                child.region = new Rectangle(this.region.getXMin(), this.getCoords()[1], this.region.getXMax(),
+                        this.region.getYMax());
             }
         }
     }

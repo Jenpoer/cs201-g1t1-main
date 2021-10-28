@@ -69,7 +69,7 @@ public class Rectangle {
     }
 
     public boolean intersects(Rectangle that) {
-        return this.xMax >= that.xMin && this.yMax >= that.yMin && that.xMax >= this.xMin && that.yMax >= this.yMin;
+        return this.xMin <= that.xMax && this.xMax >= that.xMin && this.yMax >= that.yMin && this.yMin <= that.yMax;
     }
 
     public boolean contains(Rectangle that) {
@@ -126,6 +126,12 @@ public class Rectangle {
         int hash3 = ((Double) xMax).hashCode();
         int hash4 = ((Double) yMax).hashCode();
         return 31 * (31 * (31 * hash1 + hash2) + hash3) + hash4;
+    }
+
+    @Override
+    public String toString() {
+        return String.format("~~Left (xMin): %f, Right (xMax): %f, Bottom (yMin): %f, Top (yMax): %f~~", xMin, xMax,
+                yMin, yMax);
     }
 
 }

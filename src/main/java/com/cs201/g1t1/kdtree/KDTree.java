@@ -34,4 +34,6 @@ public abstract class KDTree {
     public abstract List<KDTreeNode> kNearestNeighbour(Double[] point, int k);
 
     protected abstract void updateRegions();
+
+    
 }
