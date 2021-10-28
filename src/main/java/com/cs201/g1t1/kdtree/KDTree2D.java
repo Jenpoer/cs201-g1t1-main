@@ -80,22 +80,32 @@ public class KDTree2D extends KDTree {
             return;
         }
 
-        if (range.contains(validateNode(node.getLeftNode()).getRegion())) {
-            // report subtree at node.getLeftNode()
-            logger.info("region of left child fully contained in query range");
-            found.addAll(reportSubtree(validateNode(node.getLeftNode())));
-        } else if (range.intersects(validateNode(node.getLeftNode()).getRegion())) {
-            logger.info("region of left child intersects query range");
-            rangeQuery(range, validateNode(node.getLeftNode()), found);
+        if (node.getLeftNode() != null) {
+            if (range.contains(validateNode(node.getLeftNode()).getRegion())) {
+                // report subtree at node.getLeftNode()
+                // logger.info("region of left child fully contained in query range");
+                found.addAll(reportSubtree(validateNode(node.getLeftNode())));
+            } else if (range.intersects(validateNode(node.getLeftNode()).getRegion())) {
+                // logger.info("region of left child intersects query range");
+                if (range.contains(node.getCoords())) {
+                    found.add(node);
+                }
+                rangeQuery(range, validateNode(node.getLeftNode()), found);
+            }
         }
 
-        if (range.contains(validateNode(node.getRightNode()).getRegion())) {
-            // report subtree at node.getRightNode()
-            logger.info("region of right child fully contained in query range");
-            found.addAll(reportSubtree(validateNode(node.getRightNode())));
-        } else if (range.intersects(validateNode(node.getRightNode()).getRegion())) {
-            logger.info("region of right child intersects query range");
-            rangeQuery(range, validateNode(node.getRightNode()), found);
+        if (node.getRightNode() != null) {
+            if (range.contains(validateNode(node.getRightNode()).getRegion())) {
+                // report subtree at node.getRightNode()
+                // logger.info("region of right child fully contained in query range");
+                found.addAll(reportSubtree(validateNode(node.getRightNode())));
+            } else if (range.intersects(validateNode(node.getRightNode()).getRegion())) {
+                // logger.info("region of right child intersects query range");
+                if (range.contains(node.getCoords())) {
+                    found.add(node);
+                }
+                rangeQuery(range, validateNode(node.getRightNode()), found);
+            }
         }
     }
 
@@ -110,7 +120,7 @@ public class KDTree2D extends KDTree {
         if (node == null) {
             return;
         }
-        
+
         inorderTraversal(validateNode(node.getLeftNode()), snapshot);
         snapshot.add(node);
         inorderTraversal(validateNode(node.getRightNode()), snapshot);
