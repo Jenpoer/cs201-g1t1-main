@@ -1,9 +1,11 @@
-package com.cs201.g1t1.kdtree;
+package com.cs201.g1t1.spatial.kdtree;
 
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.PriorityQueue;
+
+import com.cs201.g1t1.spatial.Dimensional;
 
 public abstract class KDTreeKNN {
     private static int dimensions;

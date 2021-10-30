@@ -1,6 +1,9 @@
-package com.cs201.g1t1.kdtree;
+package com.cs201.g1t1.spatial.kdtree;
 
 import java.util.Arrays;
+
+import com.cs201.g1t1.spatial.Dimensional;
+import com.cs201.g1t1.spatial.Node;
 
 public class KDTreeNode<T extends Dimensional> implements Dimensional, Node<T> {
 

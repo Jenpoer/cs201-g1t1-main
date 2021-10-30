@@ -1,4 +1,7 @@
-package com.cs201.g1t1.kdtree;
+package com.cs201.g1t1.spatial.kdtree;
+
+import com.cs201.g1t1.spatial.Dimensional;
+import com.cs201.g1t1.spatial.Rectangle;
 
 import org.slf4j.*;
 

@@ -1,10 +1,13 @@
-package com.cs201.g1t1.kdtree;
+package com.cs201.g1t1.spatial.kdtree;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.*;
+
+import com.cs201.g1t1.spatial.Point;
+import com.cs201.g1t1.spatial.Rectangle;
 
 import org.slf4j.*;
 

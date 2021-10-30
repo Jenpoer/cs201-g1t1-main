@@ -1,7 +1,9 @@
-package com.cs201.g1t1.kdtree;
+package com.cs201.g1t1.spatial.kdtree;
 
 import com.cs201.g1t1.repository.BusinessRepository;
 import com.cs201.g1t1.repository.CategoryRepository;
+import com.cs201.g1t1.spatial.BusinessGeo;
+import com.cs201.g1t1.spatial.Rectangle;
 import com.cs201.g1t1.model.*;
 
 import java.util.*;

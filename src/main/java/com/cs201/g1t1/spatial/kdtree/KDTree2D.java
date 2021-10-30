@@ -1,4 +1,4 @@
-package com.cs201.g1t1.kdtree;
+package com.cs201.g1t1.spatial.kdtree;
 
 import java.util.Collections;
 import java.util.Comparator;
@@ -6,6 +6,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.PriorityQueue;
 import java.util.Set;
+
+import com.cs201.g1t1.spatial.Dimensional;
+import com.cs201.g1t1.spatial.Rectangle;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

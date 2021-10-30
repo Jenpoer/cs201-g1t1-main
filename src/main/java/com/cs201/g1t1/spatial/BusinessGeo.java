@@ -1,4 +1,4 @@
-package com.cs201.g1t1.kdtree;
+package com.cs201.g1t1.spatial;
 
 import com.cs201.g1t1.model.Business;
 

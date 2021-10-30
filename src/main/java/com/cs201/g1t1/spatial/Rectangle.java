@@ -1,6 +1,6 @@
 // REFERENCE: https://www.javatips.net/api/algs4-master/src/main/java/edu/princeton/cs/algs4/RectHV.java
 
-package com.cs201.g1t1.kdtree;
+package com.cs201.g1t1.spatial;
 
 import java.util.List;
 import org.slf4j.*;

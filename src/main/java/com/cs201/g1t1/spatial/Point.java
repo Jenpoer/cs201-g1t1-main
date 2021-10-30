@@ -1,4 +1,4 @@
-package com.cs201.g1t1.kdtree;
+package com.cs201.g1t1.spatial;
 
 public class Point implements Dimensional {
     private Double[] coords;
