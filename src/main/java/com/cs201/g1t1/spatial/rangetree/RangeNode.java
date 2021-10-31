@@ -1,37 +1,76 @@
 package com.cs201.g1t1.spatial.rangetree;
 
+import java.util.List;
+
 import com.cs201.g1t1.spatial.Dimensional;
-import com.cs201.g1t1.spatial.Node;
 
-public class RangeNode<T extends Dimensional> extends BSTNode<T> {
+public class RangeNode<T extends Dimensional> implements Dimensional {
 
-    private BSTCoords bst;
+    private RangeNode left;
+    private RangeNode right;
 
-    public RangeNode(T element) {
-        super(element);
+    private RangeTree auxTree = null;
+
+    private T element;
+
+    private List<T> elements;
+
+    public RangeNode(T element, List<T> elements) {
+        this.element = element;
+        this.elements = elements;
     }
 
-    public RangeNode(BSTNode<T> bstNode) {
-        super(bstNode.getElement());
-        super.setLeftNode(bstNode.getLeftNode());
-        super.setRightNode(bstNode.getRightNode());
-        this.bst = null;
+    @Override
+    public Double[] getCoords() {
+        return element.getCoords();
     }
 
-    public BSTCoords getBst() {
-        return this.bst;
+    public RangeNode getLeft() {
+        return this.left;
     }
 
-    public void setBst(BSTCoords bst) {
-        this.bst = bst;
+    public void setLeft(RangeNode left) {
+        this.left = left;
+    }
+
+    public RangeNode getRight() {
+        return this.right;
+    }
+
+    public void setRight(RangeNode right) {
+        this.right = right;
+    }
+
+    public RangeTree getAuxTree() {
+        return this.auxTree;
+    }
+
+    public void setAuxTree(RangeTree auxTree) {
+        this.auxTree = auxTree;
+    }
+
+    public T getElement() {
+        return this.element;
+    }
+
+    public void setElement(T element) {
+        this.element = element;
+    }
+
+    public List<T> getElements() {
+        return this.elements;
+    }
+
+    public void setElements(List<T> elements) {
+        this.elements = elements;
     }
 
     public Double getX() {
-        return super.getCoords()[0];
+        return getCoords()[0];
     }
 
     public Double getY() {
-        return super.getCoords()[1];
+        return getCoords()[1];
     }
 
 }

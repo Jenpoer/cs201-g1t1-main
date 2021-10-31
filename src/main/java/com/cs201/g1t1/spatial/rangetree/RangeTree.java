@@ -1,161 +1,232 @@
+// REFERENCE: https://github.com/DanialDMQ/RangeTree
+
 package com.cs201.g1t1.spatial.rangetree;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.stream.Collectors;
+import java.util.*;
 
 import com.cs201.g1t1.spatial.Dimensional;
 import com.cs201.g1t1.spatial.Rectangle;
 
-import org.slf4j.*;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnJava.Range;
 import org.springframework.stereotype.Component;
 
-@Component
-public class RangeTree extends BSTCoords {
+public class RangeTree<T extends Dimensional> {
 
-    private RangeNode<? extends Dimensional> root;
+    private RangeNode root;
 
-    Logger logger = LoggerFactory.getLogger(RangeTree.class);
+    private int by;
 
-    // -----------------------------------------
-    // Constructors
-    // -----------------------------------------
-    public RangeTree() {
-        super(0);
+    public RangeTree(int by) {
+        this.by = by;
     }
 
-    public void buildFrom2DPoints(List<? extends Dimensional> points) {
-        List<RangeNode> nodes = points.stream().map(p -> new RangeNode(p))
-                .collect(Collectors.toCollection(ArrayList::new));
-        super.setRoot(buildXTree(nodes));
+    public RangeNode construct(List<T> points) {
+
+        List<T> sorted = new ArrayList<>(points);
+
+        Collections.sort(sorted, new NodeComparator(this.by));
+
+        this.root = this.utilConstructor(sorted);
+
+        return this.root;
     }
 
-    private RangeNode buildXTree(List<RangeNode> nodes) {
-        BSTCoords yBST = new BSTCoords(nodes, 1);
+    private RangeNode utilConstructor(List<T> points) {
 
-        if (nodes.isEmpty()) {
+        if (points.size() == 0) {
             return null;
         }
 
-        Collections.sort(nodes, new NodeComparator(0));
+        else if (points.size() == 1) {
+            return new RangeNode(points.get(0), points);
+        }
 
-        final int length = nodes.size();
+        else {
+            final int length = points.size();
 
-        // Get the median
-        final int medianIndex = length / 2;
-        final RangeNode medianPoint = nodes.get(medianIndex);
+            // Get the median
+            final int medianIndex = length / 2;
+            final Dimensional medianPoint = points.get(medianIndex);
 
-        // Recursively build the left subtree
-        final List<RangeNode> beforeMedianPoints = nodes.subList(0, medianIndex);
-        final RangeNode leftChild = buildXTree(beforeMedianPoints);
+            // Recursively build the left subtree
+            final List<T> beforeMedianPoints = points.subList(0, medianIndex);
+            final RangeNode leftChild = utilConstructor(beforeMedianPoints);
 
-        // Recursively build the right subtree
-        final List<RangeNode> afterMedianPoints = nodes.subList(medianIndex + 1, length);
-        final RangeNode rightChild = length > 1 ? buildXTree(afterMedianPoints) : null;
+            // Recursively build the right subtree
+            final List<T> afterMedianPoints = points.subList(medianIndex + 1, length);
+            final RangeNode rightChild = length > 1 ? utilConstructor(afterMedianPoints) : null;
 
-        // Set the root of the subtree
-        medianPoint.setLeftNode(leftChild);
-        medianPoint.setRightNode(rightChild);
-        medianPoint.setBst(yBST);
-        logger.info("x: " + (medianPoint.getCoords()[0]).toString());
-        return medianPoint;
-    }
-
-    public void preorderTraversal(RangeNode node) {
-        if (node != null) {
-            logger.info("~~x: " + (node.getCoords()[0]).toString() + "y: " + (node.getCoords()[1]).toString() + "~~");
-            BSTCoords auxTree = node.getBst();
-            auxTree.preorder(auxTree.getRoot());
-            preorderTraversal(validate(node.getLeftNode()));
-            preorderTraversal(validate(node.getRightNode()));
+            // Set the root of the subtree
+            RangeNode v = new RangeNode(medianPoint, points);
+            v.setLeft(leftChild);
+            v.setRight(rightChild);
+            return v;
         }
     }
 
-    // -----------------------------------------
-    // Range Search
-    // -----------------------------------------
+    private boolean isLeaf(RangeNode root) {
+        if (root == null || (root.getLeft() == null && root.getRight() == null)) {
+            return true;
+        }
 
-    // Get all points in range
-    public List<BSTNode> rangeQuery(Rectangle range) {
-        List<BSTNode> nodes = new ArrayList<>();
-        rangeQuery(range, nodes);
-        return nodes;
-
+        return false;
     }
 
-    public void rangeQuery(Rectangle rect, List<BSTNode> list) {
-        Double xMax = rect.getXMax();
-        Double xMin = rect.getXMin();
-        // find splitting node h where h.x is in the x-interval
-        RangeNode h = root;
-        while (h != null && !(h.getX() >= xMin && h.getX() <= xMax)) {
-            if (xMax.compareTo(h.getX()) < 0) {
-                h = validate(h.getLeftNode());
-            } else if ((h.getX()).compareTo(xMin) < 0) {
-                h = validate(h.getRightNode());
+    private RangeNode get(RangeNode root, Rectangle range, int by) {
+        if (by == 0) {
+            while (!(this.isLeaf(root)) && (root.getX() > range.getXMax() || root.getX() < range.getXMin())) {
+                if (root.getX() >= range.getXMax()) {
+                    root = root.getLeft();
+                } else {
+                    root = root.getRight();
+                }
+            }
+            return root;
+        } else {
+            while (!(this.isLeaf(root)) && (root.getY() > range.getYMax() || root.getY() < range.getYMin())) {
+                if (root.getY() >= range.getYMax()) {
+                    root = root.getLeft();
+                } else {
+                    root = root.getRight();
+                }
+            }
+            return root;
+        }
+    }
+
+    public Set<T> rangeQuery(Rectangle range) {
+        Set<T> output = new HashSet<>();
+
+        RangeNode<T> u = this.get(this.root, range, 0);
+
+        if (u != null) {
+            if (range.contains(u.getCoords())) {
+                output.add(u.getElement());
+            }
+            RangeNode<T> v = u.getLeft();
+            while (v != null) {
+                if (range.contains(v.getCoords())) {
+                    output.add(v.getElement());
+                }
+
+                if (range.getXMin() <= v.getX()) {
+
+                    RangeNode<T> vRight = v.getRight();
+                    if (vRight != null) {
+                        // construction of the y tree
+                        if (vRight.getAuxTree() == null) {
+                            vRight.setAuxTree(new RangeTree(1));
+                            vRight.getAuxTree().construct(v.getElements());
+                            vRight.setElements(null);
+                            vRight.getAuxTree().singleQuery(range, output);
+                        } else {
+                            vRight.getAuxTree().singleQuery(range, output);
+                        }
+                    }
+
+                    v = v.getLeft();
+                } else {
+                    v = v.getRight();
+                }
             }
 
-        }
-        if (h == null)
-            return;
+            v = u.getRight();
+            while (v != null) {
+                if (range.contains(v.getCoords())) {
+                    output.add(v.getElement());
+                }
 
-        if (rect.contains(h.getCoords())) {
-            list.add(h);
+                if (range.getXMax() >= v.getX()) {
+
+                    RangeNode<T> vLeft = v.getLeft();
+                    if (vLeft != null) {
+                        // construction of the y tree
+                        if (vLeft.getAuxTree() == null) {
+                            vLeft.setAuxTree(new RangeTree(1));
+                            vLeft.getAuxTree().construct(vLeft.getElements());
+                            vLeft.setElements(null);
+                            ;
+                            vLeft.getAuxTree().singleQuery(range, output);
+                        } else {
+                            vLeft.getAuxTree().singleQuery(range, output);
+                        }
+                    }
+
+                    v = v.getRight();
+                } else {
+                    v = v.getLeft();
+                }
+            }
         }
 
-        queryL(validate(h.getLeftNode()), rect, list);
-        queryR(validate(h.getRightNode()), rect, list);
+        return output;
     }
 
-    // find all keys >= xmin in subtree rooted at h
-    private void queryL(RangeNode h, Rectangle rect, List<BSTNode> list) {
-        if (h == null)
-            return;
-        if (rect.contains(h.getCoords())) {
-            list.add(h);
-        }
-        if (h.getX().compareTo(rect.getXMin()) < 0) {
-            enumerate(validate(h.getRightNode()), rect, list);
-            queryL(validate(h.getLeftNode()), rect, list);
-        } else {
-            queryL(validate(h.getRightNode()), rect, list);
+    public void singleQuery(Rectangle range, Set<T> output) {
+
+        RangeNode<T> u = this.get(this.root, range, 1);
+
+        if (u != null) {
+            if (range.contains(u.getCoords())) {
+                output.add(u.getElement());
+            }
+
+            RangeNode<T> v = u.getLeft();
+            while (v != null) {
+                if (range.contains(v.getCoords())) {
+                    output.add(v.getElement());
+                }
+
+                if (range.getYMin() <= v.getY()) {
+                    if (v.getRight() != null) {
+                        List<T> ps = v.getRight().getElements();
+                        for (T point : ps) {
+                            output.add(point);
+                        }
+                    }
+
+                    v = v.getLeft();
+                } else {
+                    v = v.getRight();
+                }
+            }
+
+            v = u.getRight();
+            while (v != null) {
+                if (range.contains(v.getCoords())) {
+                    output.add(v.getElement());
+                }
+
+                if (range.getYMax() >= v.getY()) {
+                    if (v.getLeft() != null) {
+                        List<T> ps = v.getLeft().getElements();
+                        for (T point : ps) {
+                            output.add(point);
+                        }
+                    }
+
+                    v = v.getRight();
+                } else {
+                    v = v.getLeft();
+                }
+            }
         }
     }
 
-    // find all keys <= xmax in subtree rooted at h
-    private void queryR(RangeNode h, Rectangle rect, List<BSTNode> list) {
-        Double xMax = rect.getXMax();
+    // ----------------- NESTED COMPARATOR CLASS -----------------
+    private static class NodeComparator implements Comparator<Dimensional> {
+        private final int axis;
 
-        if (h == null)
-            return;
-        if (rect.contains(h.getCoords()))
-            list.add(h);
-        if (xMax.compareTo(h.getX()) > 0) {
-            enumerate(validate(h.getLeftNode()), rect, list);
-            queryR(validate(h.getRightNode()), rect, list);
-        } else {
-            queryR(validate(h.getLeftNode()), rect, list);
+        NodeComparator(int axis) {
+            this.axis = axis;
         }
+
+        @Override
+        public int compare(Dimensional o1, Dimensional o2) {
+            return o1.getCoords()[axis].compareTo(o2.getCoords()[axis]);
+        }
+
     }
 
-    // precondition: subtree rooted at h has keys between xmin and xmax
-    private void enumerate(RangeNode h, Rectangle rect, List<BSTNode> list) {
-        if (h == null)
-            return;
-        Iterable<BSTNode> bIterable = h.getBst().range(rect.getYMin(), rect.getYMax());
-        for (BSTNode y : bIterable) {
-            list.add(y);
-        }
-    }
-
-    private RangeNode validate(BSTNode node) {
-        if (node instanceof RangeNode) {
-            return (RangeNode) node;
-        } else {
-            throw new IllegalArgumentException("Node be of type RangeNode");
-        }
-    }
+    // ------------- END OF NESTED COMPARATOR CLASS -------------
 
 }
