@@ -4,8 +4,10 @@ import java.util.*;
 import com.cs201.g1t1.model.Business;
 import com.cs201.g1t1.model.Category;
 
+import org.springframework.stereotype.Component;
 
 
+@Component
 public class LinearSearch {
 
      /*
