@@ -40,21 +40,27 @@ public class Hashmap {
 
     @GetMapping("/businesses")
     public List<Business> getBusiness(){
-        List<Business> b = businesses.findByCity("Austin");
+        List<Business> b = businesses.findByCity("Concord");
         return b;
     }
 
     @GetMapping("/unique")
     public String getUniqueCategory(){
-        List<Business> bs = businesses.findByCity("Austin");// this one will the datas of businesses from Austin
-        ChainHashMap<String,Business> map = new ChainHashMap<String,Business>(1330,7); // should get the category size from the repositry
-
+        List<Business> bs = businesses.findByCity("Concord");// this one will the datas of businesses from Austin
+        ChainHashMap<String,Business> map = new ChainHashMap<String,Business>(1330); // should get the category size from the repositry
+        ArrayList<String> c = new ArrayList<>();
         for(Business b : bs){
+            
             // Iterator categories = business.getCategories().iterator();
             for(Category category: b.getCategories()){
                 String cno = category.getCategoryName(); // use as the key
-                int hash = (int) ((Math.abs(cno.hashCode()*5 + 9) % 7) % 1330); // use as hash
-                map.bucketPut(hash, cno, b);
+                int hash = (int) ((Math.abs(cno.hashCode())) % 1330); // use as hash
+                map.bucketPut(hash, b.getBusinessId(), b);
+                if(!c.contains(cno)){
+                    c.add(cno);
+                }
+                //logger.info(cno);
+                //logger.info(Integer.toString(hash));
                 //UnsortedTableMap<Integer,Business> businessEntry = new unsortedTableMap<Integer,Business>;
 
             }
@@ -62,24 +68,31 @@ public class Hashmap {
         }
         //Iterator<Entry<Integer,Business>> iter = map.entrySet().iterator();
         UnsortedTableMap<String,Business>[] buckets = map.getTable();
-
+        logger.info(Integer.toString(buckets.length));
         int max =0;
-        Category result = null;
-        for(Category category: categories.findAll()){
-            String cno = category.getCategoryName();
-            int hash = (int) ((Math.abs(cno.hashCode()*5 + 9) % 7) % 1330);
-            UnsortedTableMap<String,Business> table = buckets[hash];
-            int size = table.size();
+        String result = null;
+        for(String cno: c){
+            int hash = (int) ((Math.abs(cno.hashCode())) % 1330);
+            if(buckets[hash] != null){
+                logger.info(cno);
+                 UnsortedTableMap<String,Business> table = buckets[hash];
+                int size = table.size();
+                logger.info(Integer.toString(size));
+
             if(size > max){
                 max = size;
-                result = category;
+                result = cno;
+                //logger.info(cno);
+                //logger.info(Integer.toString(max));
             }
+            }
+           
         }
         if(result == null){
             String ans = "no reuslt";
             return ans;
         }
-        return result.getCategoryName();
+        return result;
 
     }    
     

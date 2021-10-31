@@ -37,7 +37,7 @@ public class ChainHashMap<K,V> extends AbstractHashMap<K,V> {
 
   // provide same constructors as base class
   /** Creates a hash table with capacity 11 and prime factor 109345121. */
-  public ChainHashMap() { super(); }
+  //public ChainHashMap() { super(); }
 
   /** Creates a hash table with given capacity and prime factor 109345121. */
   public ChainHashMap(int cap) { super(cap); }
