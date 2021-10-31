@@ -10,5 +10,4 @@ import com.cs201.g1t1.model.*;
 
 @Repository
 public interface CategoryRepository extends JpaRepository<Category, String> {
-
 }
