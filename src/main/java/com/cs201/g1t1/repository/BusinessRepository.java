@@ -18,5 +18,6 @@ public interface BusinessRepository extends JpaRepository<Business, String> {
     @Query(nativeQuery=true, value ="select business_id from cs201g1t1.business where city = ?;")
     List<Business> getBusinesses(String cityname);
     List<Business> findByCity(String name);
+    List<Business> findByPostalCode (String postalCode);
 
 }

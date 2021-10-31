@@ -51,7 +51,7 @@ public class LinearSearch {
         return index;
     }
 
-    public Category findMostPopularBusiness(List <Business> businesses, int size){
+    public Category findMostPopularCategory(List <Business> businesses, int size){
 
         List <Category> categories = new ArrayList <Category> ();
         int [] categoriesOcc = new int [size]; 

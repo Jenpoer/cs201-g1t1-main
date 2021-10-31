@@ -33,6 +33,9 @@ public class ArrayController {
     @Autowired 
     private Hashmap hashmap;
 
+    @Autowired 
+    private CategoryRepository categories;
+
 
     // @GetMapping("/city")
     // public List<String> getCities(){
@@ -53,17 +56,26 @@ public class ArrayController {
     //     return b;
     // }
 
+    Logger logger = LoggerFactory.getLogger(ArrayController.class);
+
+    @GetMapping("businesses/{postalCode}")
+    public List<Business> getBusinessesByPostalCode (String postalCode){
+        return businesses.findByPostalCode(postalCode);
+    }
+
+   
+
     @GetMapping("/businesses/popular")
-    public Category getMostPopularBusiness(){
-        List<Business> b = businesses.findByCity("Austin");
-        Category mostPopularBusiness = linearSearch.findMostPopularBusiness(b, 20);
+    public Category getMostPopularCategory(){
+        List<Business> b = businesses.findByCity("Concord");
+        Category mostPopularBusiness = linearSearch.findMostPopularCategory(b, b.size() * 10);
         return mostPopularBusiness;
     }
 
     @GetMapping("/businesses/category/{categoryName}")
     public int getNumberOfOccurences (@PathVariable (value = "categoryName") String categoryName){
+        Category c = new Category(categoryName);
         List<Business> b = businesses.findByCity("Austin");
-        Category c  = new Category(categoryName);
         return linearSearch.findOccurences(c, b);
         
     }
