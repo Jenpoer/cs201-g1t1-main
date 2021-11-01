@@ -49,6 +49,8 @@ public class Hashmap {
         List<Business> bs = businesses.findByCity("Concord");// this one will the datas of businesses from Austin
         ChainHashMap<String,Business> map = new ChainHashMap<String,Business>(1330); // should get the category size from the repositry
         ArrayList<String> c = new ArrayList<>();
+        final long startTime = System.currentTimeMillis();
+
         for(Business b : bs){
             
             // Iterator categories = business.getCategories().iterator();
@@ -68,16 +70,16 @@ public class Hashmap {
         }
         //Iterator<Entry<Integer,Business>> iter = map.entrySet().iterator();
         UnsortedTableMap<String,Business>[] buckets = map.getTable();
-        logger.info(Integer.toString(buckets.length));
+        //logger.info(Integer.toString(buckets.length));
         int max =0;
         String result = null;
         for(String cno: c){
             int hash = (int) ((Math.abs(cno.hashCode())) % 1330);
             if(buckets[hash] != null){
-                logger.info(cno);
+                //logger.info(cno);
                  UnsortedTableMap<String,Business> table = buckets[hash];
                 int size = table.size();
-                logger.info(Integer.toString(size));
+                //logger.info(Integer.toString(size));
 
             if(size > max){
                 max = size;
@@ -88,6 +90,8 @@ public class Hashmap {
             }
            
         }
+        final long endTime = System.currentTimeMillis();
+        logger.info("Total execution time: " + (endTime - startTime));
         if(result == null){
             String ans = "no reuslt";
             return ans;
