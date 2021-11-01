@@ -36,7 +36,7 @@ public class LinearSearch {
         for (int i = 0; i < businesses.size(); i++){
              categories = new ArrayList <Category> (businesses.get(i).getCategories());
             for (int j = 0; j < categories.size(); j++){
-                if (categories.get(i).getCategoryName() == categoryName){
+                if (categories.get(j).getCategoryName().equals(categoryName)){
                     occurences++;
                 }
             }
@@ -102,8 +102,11 @@ public class LinearSearch {
             for (Category c: businesses.get(i).getCategories()){
                 if (!categories.contains(c)){
                     categories.add(c);
+                    categoriesOcc.add(categories.indexOf(c),1);
+                } else {
+                    categoriesOcc.add(categories.indexOf(c), categoriesOcc.get(categories.indexOf(c)) + 1);
                 }
-                categoriesOcc.add(categories.indexOf(c), categoriesOcc.get(categories.indexOf(c)) + 1);
+                
             }
         }
         int highestCountIndex = findMax(categoriesOcc);
