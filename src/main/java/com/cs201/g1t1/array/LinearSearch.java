@@ -27,45 +27,83 @@ public class LinearSearch {
     }
 
     
-    public int findOccurences (Category category, List <Business> businesses){
+    public int findOccurences (String categoryName, List <Business> businesses){
 
         int occurences = 0;
 
+        List <Category> categories;
+
         for (int i = 0; i < businesses.size(); i++){
-            if (businesses.get(i).getCategories().contains(category)){
-                occurences++;
+             categories = new ArrayList <Category> (businesses.get(i).getCategories());
+            for (int j = 0; j < categories.size(); j++){
+                if (categories.get(i).getCategoryName() == categoryName){
+                    occurences++;
+                }
             }
         }
         return occurences;
     }
 
-    public int findMax (int [] array) {
-        int max = array[0];
+    // public int findOccurences (Category category, List <Business> businesses){
+
+    //     int occurences = 0;
+
+    //     for (int i = 0; i < businesses.size(); i++){
+    //         if (businesses.get(i).getCategories().contains(category)){
+    //             occurences++;
+    //         }
+    //     }
+    //     return occurences;
+    // }
+
+    public int findMax (List <Integer> input) {
+        int max = input.get(0);
         int index = 0;
-        for (int i = 1; i < array.length;i++){
-            if (array[i] > max){
-                max = array[i];
+        for (int i = 1; i < input.size();i++){
+            if (input.get(i) > max){
+                max = input.get(i);
                 index = i;
             }
         }
         return index;
     }
 
-    public Category findMostPopularCategory(List <Business> businesses, int size){
+    // public Category findMostPopularCategory(List <Business> businesses, int size){
+
+    //     List <Category> categories = new ArrayList <Category> ();
+    //     int [] categoriesOcc = new int [size]; 
+
+    //     for (int i = 0; i < businesses.size(); i++){
+    //         for (Category c: businesses.get(i).getCategories()){
+    //             if (!categories.contains(c)){
+    //                 if (categories.size() == size-2){
+    //                     resize(size * 2, categoriesOcc);
+    //                     size *= 2;
+    //                 }
+    //                 categories.add(c);
+    //             }
+    //             categoriesOcc[categories.indexOf(c)]++;
+    //         }
+    //     }
+    //     int highestCountIndex = findMax(categoriesOcc);
+    //     Category mostPopular = categories.get(highestCountIndex);
+
+    //     return mostPopular;
+
+    // }
+
+
+    public Category findMostPopularCategory(List <Business> businesses){
 
         List <Category> categories = new ArrayList <Category> ();
-        int [] categoriesOcc = new int [size]; 
+        List <Integer> categoriesOcc = new ArrayList <Integer>(); 
 
         for (int i = 0; i < businesses.size(); i++){
             for (Category c: businesses.get(i).getCategories()){
                 if (!categories.contains(c)){
-                    if (categories.size() == size-1){
-                        resize(size * 2, categoriesOcc);
-                        size *= 2;
-                    }
                     categories.add(c);
                 }
-                categoriesOcc[categories.indexOf(c)]++;
+                categoriesOcc.add(categories.indexOf(c), categoriesOcc.get(categories.indexOf(c)) + 1);
             }
         }
         int highestCountIndex = findMax(categoriesOcc);

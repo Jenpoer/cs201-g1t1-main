@@ -68,15 +68,15 @@ public class ArrayController {
     @GetMapping("/businesses/popular")
     public Category getMostPopularCategory(){
         List<Business> b = businesses.findByCity("Concord");
-        Category mostPopularBusiness = linearSearch.findMostPopularCategory(b, b.size() * 10);
+        Category mostPopularBusiness = linearSearch.findMostPopularCategory(b);
         return mostPopularBusiness;
     }
 
     @GetMapping("/businesses/category/{categoryName}")
     public int getNumberOfOccurences (@PathVariable (value = "categoryName") String categoryName){
-        Category c = new Category(categoryName);
-        List<Business> b = businesses.findByCity("Austin");
-        return linearSearch.findOccurences(c, b);
+        
+        List<Business> b = businesses.findByCity("Concord");
+        return linearSearch.findOccurences(categoryName, b);
         
     }
 
