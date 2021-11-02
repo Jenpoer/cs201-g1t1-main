@@ -36,26 +36,6 @@ public class ArrayController {
     @Autowired 
     private CategoryRepository categories;
 
-
-    // @GetMapping("/city")
-    // public List<String> getCities(){
-    //     List<String> allCity = businesses.getAllCity();
-    //     return allCity;
-
-    // }
-
-    // @GetMapping("/postalCode")
-    // public List<String> getPostalCode(){
-    //     List<String> postalCode = businesses.getAllPostalCode("Austin");
-    //     return postalCode;
-    // }
-
-    // @GetMapping("/businesses")
-    // public List<Business> getBusiness(){
-    //     List<Business> b = businesses.findByCity("Austin");
-    //     return b;
-    // }
-
     Logger logger = LoggerFactory.getLogger(ArrayController.class);
 
     @GetMapping("businesses/{postalCode}")
@@ -63,23 +43,34 @@ public class ArrayController {
         return businesses.findByPostalCode(postalCode);
     }
 
-   
-
     @GetMapping("/businesses/popular")
     public Category getMostPopularCategory(){
-        List<Business> b = businesses.findByCity("Heathrow");
-        
+        List<Business> b = businesses.findByCity("Titusville");
+
         // Start Time
         long start = System.nanoTime();
+        
+        // Save staring Runtime
+        Runtime runtime1 = Runtime.getRuntime();
+        runtime1.gc();
+        long memory1 = runtime1.totalMemory() - runtime1.freeMemory();
         
         // Function Call
         Category mostPopularBusiness = linearSearch.findMostPopularCategory(b);
         
+        // Save ending Runtime
+        Runtime runtime2 = Runtime.getRuntime();
+        runtime2.gc();
+        long memory2 = runtime2.totalMemory() - runtime2.freeMemory();
+
         // End Time
         long end = System.nanoTime();
 
         // Log Total Elapsed Time (converted to milliseconds)
         logger.info("Time Elapsed: {}ms", (end - start)/1000000);
+
+        // Log Total Memory Used (converted to kilobytes)
+        logger.info("Memory used: {}KB", (memory2 - memory1)/(1024L));
 
         return mostPopularBusiness;
     }
@@ -92,7 +83,4 @@ public class ArrayController {
         
     }
 
-
-    
-    
 }
