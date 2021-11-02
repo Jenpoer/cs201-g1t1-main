@@ -6,9 +6,13 @@ import com.cs201.g1t1.model.Category;
 
 import org.springframework.stereotype.Component;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Component
 public class LinearSearch {
+
+    Logger logger = LoggerFactory.getLogger(LinearSearch.class);
 
      /*
     • Write a method named findMostPopularBusiness that returns the business with the most number of occurences in the array
@@ -65,6 +69,7 @@ public class LinearSearch {
                 index = i;
             }
         }
+        // logger.info("Index to find: {}", index);
         return index;
     }
 
@@ -99,16 +104,20 @@ public class LinearSearch {
         List <Integer> categoriesOcc = new ArrayList <Integer>(); 
 
         for (int i = 0; i < businesses.size(); i++){
-            for (Category c: businesses.get(i).getCategories()){
+            for (Category c: businesses.get(i).getCategories()){ 
                 if (!categories.contains(c)){
                     categories.add(c);
                     categoriesOcc.add(categories.indexOf(c),1);
                 } else {
-                    categoriesOcc.add(categories.indexOf(c), categoriesOcc.get(categories.indexOf(c)) + 1);
+                    categoriesOcc.set(categories.indexOf(c), categoriesOcc.get(categories.indexOf(c)) + 1);
                 }
                 
             }
         }
+
+        // logger.info("Size of categories Array: {}", categories.size());
+        // logger.info("Size of occurances Array: {}", categoriesOcc.size());
+
         int highestCountIndex = findMax(categoriesOcc);
         Category mostPopular = categories.get(highestCountIndex);
 
