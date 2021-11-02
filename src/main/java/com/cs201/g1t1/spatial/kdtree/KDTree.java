@@ -31,10 +31,6 @@ public abstract class KDTree {
         this.root = root;
     }
 
-    public abstract KDTreeNode nearestNeighbour(Double[] point);
-
-    public abstract List<KDTreeNode> kNearestNeighbour(Double[] point, int k);
-
     protected abstract void updateRegions();
 
     

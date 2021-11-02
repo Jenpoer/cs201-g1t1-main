@@ -4,45 +4,19 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
-import java.util.PriorityQueue;
 import java.util.Set;
 
 import com.cs201.g1t1.spatial.Dimensional;
 import com.cs201.g1t1.spatial.Rectangle;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
 import org.slf4j.*;
 
-@Component
 public class KDTree2D extends KDTree {
-    private KDTree2DKNN nearestNeighborUtil;
 
     Logger logger = LoggerFactory.getLogger(KDTree2D.class);
 
-    @Autowired
-    public KDTree2D(KDTree2DKNN nearestNeighborUtil) {
+    public KDTree2D() {
         super(2);
-        this.nearestNeighborUtil = nearestNeighborUtil;
-    }
-
-    @Override
-    public KDTreeNode nearestNeighbour(Double[] point) {
-        if (super.getRoot() == null) {
-            throw new IllegalStateException();
-        }
-
-        return nearestNeighborUtil.nearest(super.getRoot(), point);
-    }
-
-    @Override
-    public List<KDTreeNode> kNearestNeighbour(Double[] point, int k) {
-        if (super.getRoot() == null) {
-            throw new IllegalStateException();
-        }
-
-        return nearestNeighborUtil.kNearest(super.getRoot(), point, k);
     }
 
     private KDTree2DNode<? extends Dimensional> validateNodeAllowNull(KDTreeNode node) {
@@ -87,10 +61,8 @@ public class KDTree2D extends KDTree {
         if (node.getLeftNode() != null) {
             if (range.contains(validateNode(node.getLeftNode()).getRegion())) {
                 // report subtree at node.getLeftNode()
-                // logger.info("region of left child fully contained in query range");
                 found.addAll(reportSubtree(validateNode(node.getLeftNode())));
             } else if (range.intersects(validateNode(node.getLeftNode()).getRegion())) {
-                // logger.info("region of left child intersects query range");
                 if (range.contains(node.getCoords())) {
                     found.add(node);
                 }
@@ -101,10 +73,8 @@ public class KDTree2D extends KDTree {
         if (node.getRightNode() != null) {
             if (range.contains(validateNode(node.getRightNode()).getRegion())) {
                 // report subtree at node.getRightNode()
-                // logger.info("region of right child fully contained in query range");
                 found.addAll(reportSubtree(validateNode(node.getRightNode())));
             } else if (range.intersects(validateNode(node.getRightNode()).getRegion())) {
-                // logger.info("region of right child intersects query range");
                 if (range.contains(node.getCoords())) {
                     found.add(node);
                 }
