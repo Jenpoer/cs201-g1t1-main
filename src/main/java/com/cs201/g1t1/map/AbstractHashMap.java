@@ -63,7 +63,7 @@ public abstract class AbstractHashMap<K,V> extends AbstractMap<K,V> {
   public AbstractHashMap(int cap) { this(cap, 109345121); }  // default prime
 
   /** Creates a hash table with capacity 17 and prime factor 109345121. */
-  public AbstractHashMap() { this(17); }                     // default capacity
+  //public AbstractHashMap() { this(17); }                     // default capacity
 
   // public methods
   /**
@@ -110,7 +110,7 @@ public abstract class AbstractHashMap<K,V> extends AbstractMap<K,V> {
   // private utilities
   /** Hash function applying MAD method to default hash code. */
   private int hashValue(K key) {
-    return (int) ((Math.abs(key.hashCode()*scale + shift) % prime) % capacity);
+    return (int) ((Math.abs(key.hashCode())) % capacity);
   }
 
   /** Updates the size of the hash table and rehashes all entries. */

@@ -3,6 +3,8 @@ package com.cs201.g1t1.util;
 import com.cs201.g1t1.repository.BusinessRepository;
 import com.cs201.g1t1.spatial.*;
 import com.cs201.g1t1.spatial.kdtree.*;
+import com.cs201.g1t1.spatial.rangetree.RangeTree;
+import com.cs201.g1t1.array.LinearSearch;
 import com.cs201.g1t1.map.ChainHashMap;
 import com.cs201.g1t1.map.UnsortedTableMap;
 import com.cs201.g1t1.model.*;
@@ -19,6 +21,9 @@ public class UIController {
     private BusinessRepository businessRepository;
 
     @Autowired
+    private LinearSearch linearSearch;
+
+    @Autowired
     private KDTree2D kdTree2D;
 
     @GetMapping("/api/kyle")
@@ -27,14 +32,81 @@ public class UIController {
     }
 
     @GetMapping("/api/kd-tree/hashmap")
-    public String findMostPopularCategory(@RequestParam Double minX, @RequestParam Double maxX,
-            @RequestParam Double minY, @RequestParam Double maxY) {
-        Double[] pointMin = { minX, minY };
-        Double[] pointMax = { maxX, maxY };
+    public AlgoResult findMostPopularCategoryKDHash(@RequestParam Double xMin, @RequestParam Double xMax,
+            @RequestParam Double yMin, @RequestParam Double yMax) {
+        Double[] pointMin = { xMin, yMin };
+        Double[] pointMax = { xMax, yMax };
         Rectangle range = new Rectangle(pointMin, pointMax);
-        List<Business> business = searchBusinessesWithKDTree("Kyle", range);
 
-        return "";
+        final long startRangeSearchTime = System.currentTimeMillis();
+        List<Business> business = searchBusinessesWithKDTree("Kyle", range);
+        final long endRangeSearchTime = System.currentTimeMillis();
+        final long rangeSearchTime = endRangeSearchTime - startRangeSearchTime;
+
+        final long startCategorySearchTime = System.currentTimeMillis();
+        String categoryName = getUniqueCategoryWithHashMap(business);
+        final long endCategorySearchTime = System.currentTimeMillis();
+        final long categorySearchTime = endCategorySearchTime - startCategorySearchTime;
+        return new AlgoResult(categoryName, rangeSearchTime, categorySearchTime);
+    }
+
+    @GetMapping("/api/kd-tree/list")
+    public AlgoResult findMostPopularCategoryKDList(@RequestParam Double xMin, @RequestParam Double xMax,
+            @RequestParam Double yMin, @RequestParam Double yMax) {
+        Double[] pointMin = { xMin, yMin };
+        Double[] pointMax = { xMax, yMax };
+        Rectangle range = new Rectangle(pointMin, pointMax);
+
+        final long startRangeSearchTime = System.currentTimeMillis();
+        List<Business> business = searchBusinessesWithKDTree("Kyle", range);
+        final long endRangeSearchTime = System.currentTimeMillis();
+        final long rangeSearchTime = endRangeSearchTime - startRangeSearchTime;
+
+        final long startCategorySearchTime = System.currentTimeMillis();
+        String categoryName = getUniqueCategoryWithList(business);
+        final long endCategorySearchTime = System.currentTimeMillis();
+        final long categorySearchTime = endCategorySearchTime - startCategorySearchTime;
+
+        return new AlgoResult(categoryName, rangeSearchTime, categorySearchTime);
+    }
+
+    @GetMapping("/api/range-tree/list")
+    public AlgoResult findMostPopularCategoryRangeList(@RequestParam Double xMin, @RequestParam Double xMax,
+            @RequestParam Double yMin, @RequestParam Double yMax) {
+        Double[] pointMin = { xMin, yMin };
+        Double[] pointMax = { xMax, yMax };
+        Rectangle range = new Rectangle(pointMin, pointMax);
+
+        final long startRangeSearchTime = System.currentTimeMillis();
+        List<Business> business = searchBusinessesWithRangeTree("Kyle", range);
+        final long endRangeSearchTime = System.currentTimeMillis();
+        final long rangeSearchTime = endRangeSearchTime - startRangeSearchTime;
+
+        final long startCategorySearchTime = System.currentTimeMillis();
+        String categoryName = getUniqueCategoryWithList(business);
+        final long endCategorySearchTime = System.currentTimeMillis();
+        final long categorySearchTime = endCategorySearchTime - startCategorySearchTime;
+        return new AlgoResult(categoryName, rangeSearchTime, categorySearchTime);
+    }
+
+    @GetMapping("/api/range-tree/hashmap")
+    public AlgoResult findMostPopularCategoryRangeHash(@RequestParam Double xMin, @RequestParam Double xMax,
+            @RequestParam Double yMin, @RequestParam Double yMax) {
+        Double[] pointMin = { xMin, yMin };
+        Double[] pointMax = { xMax, yMax };
+        Rectangle range = new Rectangle(pointMin, pointMax);
+
+        final long startRangeSearchTime = System.currentTimeMillis();
+        List<Business> business = searchBusinessesWithRangeTree("Kyle", range);
+        final long endRangeSearchTime = System.currentTimeMillis();
+        final long rangeSearchTime = endRangeSearchTime - startRangeSearchTime;
+
+        final long startCategorySearchTime = System.currentTimeMillis();
+        String categoryName = getUniqueCategoryWithHashMap(business);
+        final long endCategorySearchTime = System.currentTimeMillis();
+        final long categorySearchTime = endCategorySearchTime - startCategorySearchTime;
+
+        return new AlgoResult(categoryName, rangeSearchTime, categorySearchTime);
     }
 
     private List<Business> searchBusinessesWithKDTree(String cityName, Rectangle range) {
@@ -58,56 +130,65 @@ public class UIController {
     }
 
     private String getUniqueCategoryWithHashMap(List<Business> bs) {
-        ChainHashMap<String,Business> map = new ChainHashMap<String,Business>(1330); // should get the category size from the repositry
+        ChainHashMap<String, Business> map = new ChainHashMap<String, Business>(1330); // should get the category size
+                                                                                       // from the repositry
         ArrayList<String> c = new ArrayList<>();
-        final long startTime = System.currentTimeMillis();
 
-        for(Business b : bs){
-            
+        for (Business b : bs) {
+
             // Iterator categories = business.getCategories().iterator();
-            for(Category category: b.getCategories()){
+            for (Category category : b.getCategories()) {
                 String cno = category.getCategoryName(); // use as the key
                 int hash = (int) ((Math.abs(cno.hashCode())) % 1330); // use as hash
                 map.bucketPut(hash, b.getBusinessId(), b);
-                if(!c.contains(cno)){
+                if (!c.contains(cno)) {
                     c.add(cno);
                 }
-                //logger.info(cno);
-                //logger.info(Integer.toString(hash));
-                //UnsortedTableMap<Integer,Business> businessEntry = new unsortedTableMap<Integer,Business>;
 
             }
-            
+
         }
-        //Iterator<Entry<Integer,Business>> iter = map.entrySet().iterator();
-        UnsortedTableMap<String,Business>[] buckets = map.getTable();
-        //logger.info(Integer.toString(buckets.length));
-        int max =0;
+        UnsortedTableMap<String, Business>[] buckets = map.getTable();
+        int max = 0;
         String result = null;
-        for(String cno: c){
+        for (String cno : c) {
             int hash = (int) ((Math.abs(cno.hashCode())) % 1330);
-            if(buckets[hash] != null){
-                //logger.info(cno);
-                 UnsortedTableMap<String,Business> table = buckets[hash];
+            if (buckets[hash] != null) {
+                UnsortedTableMap<String, Business> table = buckets[hash];
                 int size = table.size();
-                //logger.info(Integer.toString(size));
 
-            if(size > max){
-                max = size;
-                result = cno;
-                //logger.info(cno);
-                //logger.info(Integer.toString(max));
+                if (size > max) {
+                    max = size;
+                    result = cno;
+                }
             }
-            }
-           
         }
-        final long endTime = System.currentTimeMillis();
-        logger.info("Total execution time: " + (endTime - startTime));
-        if(result == null){
-            String ans = "no reuslt";
-            return ans;
-        }
+
         return result;
     }
 
+    private String getUniqueCategoryWithList(List<Business> b) {
+        Category mostPopularBusiness = linearSearch.findMostPopularCategory(b);
+        return mostPopularBusiness.getCategoryName();
+    }
+
+    private List<Business> searchBusinessesWithRangeTree(String cityName, Rectangle range) {
+        List<Business> businessesInCity = businessRepository.findByCity(cityName);
+
+        List<BusinessGeo> geoLocations = new ArrayList<>();
+        businessesInCity.forEach(i -> geoLocations.add(new BusinessGeo(i)));
+
+        RangeTree<BusinessGeo> rangeTree = new RangeTree<>(0);
+        rangeTree.construct(geoLocations);
+
+        Set<BusinessGeo> nn = rangeTree.rangeQuery(range);
+
+        List<Business> toReturn = new ArrayList<>();
+
+        nn.forEach(i -> {
+            toReturn.add(i.getBusiness());
+        });
+
+        return toReturn;
+    }
 }

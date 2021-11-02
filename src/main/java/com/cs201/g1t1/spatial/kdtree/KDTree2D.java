@@ -76,6 +76,7 @@ public class KDTree2D extends KDTree {
 
     public void rangeQuery(Rectangle range, KDTree2DNode<? extends Dimensional> node,
             Set<KDTree2DNode<? extends Dimensional>> found) {
+
         if (node.isLeaf()) {
             if (range.contains(node.getCoords())) {
                 found.add(node);
@@ -124,9 +125,9 @@ public class KDTree2D extends KDTree {
             return;
         }
 
-        inorderTraversal(validateNode(node.getLeftNode()), snapshot);
+        inorderTraversal(validateNodeAllowNull(node.getLeftNode()), snapshot);
         snapshot.add(node);
-        inorderTraversal(validateNode(node.getRightNode()), snapshot);
+        inorderTraversal(validateNodeAllowNull(node.getRightNode()), snapshot);
     }
 
     // ----------------- NESTED COMPARATOR CLASS -----------------
