@@ -23,9 +23,6 @@ public class UIController {
     @Autowired
     private LinearSearch linearSearch;
 
-    @Autowired
-    private KDTree2D kdTree2D;
-
     @GetMapping("/api/kyle")
     public List<Business> getBusinessesInKyle() {
         return businessRepository.findByCity("Kyle");
@@ -115,6 +112,7 @@ public class UIController {
         List<BusinessGeo> geoLocations = new ArrayList<>();
         businessesInCity.forEach(i -> geoLocations.add(new BusinessGeo(i)));
 
+        KDTree2D kdTree2D = new KDTree2D();
         kdTree2D.build(geoLocations);
 
         Set<KDTree2DNode<?>> nn = kdTree2D.rangeQuery(range);

@@ -16,7 +16,7 @@ public class RangeSimpleTest {
 
     Logger logger = LoggerFactory.getLogger(RangeSimpleTest.class);
 
-    @GetMapping("/idiot")
+    @GetMapping("/range-tree/simple")
     public List<Point> pointsInARectangle() {
         List<Point> points = new ArrayList<>();
         points.add(new Point(30.0, 40.0));
