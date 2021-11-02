@@ -144,7 +144,6 @@ public class RangeTree<T extends Dimensional> {
                             vLeft.setAuxTree(new RangeTree(1));
                             vLeft.getAuxTree().construct(vLeft.getElements());
                             vLeft.setElements(null);
-                            ;
                             vLeft.getAuxTree().singleQuery(range, output);
                         } else {
                             vLeft.getAuxTree().singleQuery(range, output);
