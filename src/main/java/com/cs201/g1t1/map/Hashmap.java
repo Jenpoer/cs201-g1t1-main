@@ -8,11 +8,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+
 import com.cs201.g1t1.model.Business;
 import com.cs201.g1t1.model.Category;
 import java.util.Iterator;
 import java.util.ArrayList;
-
 
 
 @RestController
@@ -44,13 +45,16 @@ public class Hashmap {
         return b;
     }
 
-    @GetMapping("/unique")
-    public String getUniqueCategory(){
-        List<Business> bs = businesses.findByCity("Concord");// this one will the datas of businesses from Austin
+    @GetMapping("/unique/{city}")
+    public String getUniqueCategory(@PathVariable (value = "city") String city){
+        List<Business> bs = businesses.findByCity(city);// this one will the datas of businesses from Austin
         ChainHashMap<String,Business> map = new ChainHashMap<String,Business>(1330); // should get the category size from the repositry
         ArrayList<String> c = new ArrayList<>();
         final long startTime = System.currentTimeMillis();
-
+        long KILOBYTE = 1024L;
+         Runtime runtime = Runtime.getRuntime();
+         runtime.gc();
+         long memory1 = runtime.totalMemory() - runtime.freeMemory();
         for(Business b : bs){
             
             // Iterator categories = business.getCategories().iterator();
@@ -68,6 +72,10 @@ public class Hashmap {
             }
             
         }
+        Runtime runtime2 = Runtime.getRuntime();
+         runtime2.gc();
+         long memory2 = runtime2.totalMemory() - runtime2.freeMemory();
+
         //Iterator<Entry<Integer,Business>> iter = map.entrySet().iterator();
         UnsortedTableMap<String,Business>[] buckets = map.getTable();
         //logger.info(Integer.toString(buckets.length));
@@ -84,14 +92,15 @@ public class Hashmap {
             if(size > max){
                 max = size;
                 result = cno;
-                //logger.info(cno);
-                //logger.info(Integer.toString(max));
+                logger.info(cno);
+                logger.info(Integer.toString(max));
             }
             }
            
         }
         final long endTime = System.currentTimeMillis();
         logger.info("Total execution time: " + (endTime - startTime));
+        logger.info("Memory used: {}KB", (memory2 - memory1)/KILOBYTE);
         if(result == null){
             String ans = "no reuslt";
             return ans;
@@ -100,4 +109,67 @@ public class Hashmap {
 
     }    
     
+    @GetMapping("/unique")
+    public String getUniqueCategory(){
+        List<Business> bs = businesses.findByCity("Port Coquitlam");// this one will the datas of businesses from Austin
+        ChainHashMap<String,Business> map = new ChainHashMap<String,Business>(1330); // should get the category size from the repositry
+        ArrayList<String> c = new ArrayList<>();
+        final long startTime = System.currentTimeMillis();
+        long KILOBYTE = 1024L;
+         Runtime runtime = Runtime.getRuntime();
+         runtime.gc();
+         long memory1 = runtime.totalMemory() - runtime.freeMemory();
+        for(Business b : bs){
+            
+            // Iterator categories = business.getCategories().iterator();
+            for(Category category: b.getCategories()){
+                String cno = category.getCategoryName(); // use as the key
+                int hash = (int) ((Math.abs(cno.hashCode())) % 1330); // use as hash
+                map.bucketPut(hash, b.getBusinessId(), b);
+                if(!c.contains(cno)){
+                    c.add(cno);
+                }
+                //logger.info(cno);
+                //logger.info(Integer.toString(hash));
+                //UnsortedTableMap<Integer,Business> businessEntry = new unsortedTableMap<Integer,Business>;
+
+            }
+            
+        }
+        Runtime runtime2 = Runtime.getRuntime();
+         runtime2.gc();
+         long memory2 = runtime2.totalMemory() - runtime2.freeMemory();
+
+        //Iterator<Entry<Integer,Business>> iter = map.entrySet().iterator();
+        UnsortedTableMap<String,Business>[] buckets = map.getTable();
+        //logger.info(Integer.toString(buckets.length));
+        int max =0;
+        String result = null;
+        for(String cno: c){
+            int hash = (int) ((Math.abs(cno.hashCode())) % 1330);
+            if(buckets[hash] != null){
+                //logger.info(cno);
+                 UnsortedTableMap<String,Business> table = buckets[hash];
+                int size = table.size();
+                //logger.info(Integer.toString(size));
+
+            if(size > max){
+                max = size;
+                result = cno;
+                logger.info(cno);
+                logger.info(Integer.toString(max));
+            }
+            }
+           
+        }
+        final long endTime = System.currentTimeMillis();
+        logger.info("Total execution time: " + (endTime - startTime));
+        logger.info("Memory used: {}KB", (memory2 - memory1)/KILOBYTE);
+        if(result == null){
+            String ans = "no reuslt";
+            return ans;
+        }
+        return result;
+
+    }  
 }
