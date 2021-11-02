@@ -4,6 +4,7 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import lombok.AllArgsConstructor;
@@ -24,6 +25,7 @@ public class Category {
     private String categoryName;
 
     @ManyToMany(mappedBy = "categories")
+    @JsonIgnore
     private Set<Business> businesses;
 
     public Category(String categoryName) {
