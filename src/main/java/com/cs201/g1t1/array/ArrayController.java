@@ -67,8 +67,20 @@ public class ArrayController {
 
     @GetMapping("/businesses/popular")
     public Category getMostPopularCategory(){
-        List<Business> b = businesses.findByCity("Concord");
+        List<Business> b = businesses.findByCity("Heathrow");
+        
+        // Start Time
+        long start = System.nanoTime();
+        
+        // Function Call
         Category mostPopularBusiness = linearSearch.findMostPopularCategory(b);
+        
+        // End Time
+        long end = System.nanoTime();
+
+        // Log Total Elapsed Time (converted to milliseconds)
+        logger.info("Time Elapsed: {}ms", (end - start)/1000000);
+
         return mostPopularBusiness;
     }
 
