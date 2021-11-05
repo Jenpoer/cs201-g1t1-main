@@ -28,11 +28,11 @@ public class ListController {
     /**
      * Endpoint to get the most frequently occuring business category in a particular city
      * 
-     * Note: City to be searched is hardcoded in Line 43 for ease of testing
+     * Note: City to be searched is hardcoded in Line 37 for ease of testing
      * 
      * @return name of business category with the highest number of occurances
      */
-    @GetMapping("/list/categories")
+    @GetMapping("/list/most-popular-category")
     public Category getMostPopularCategory(){
         List<Business> b = businesses.findByCity("Titusville");
 
@@ -78,16 +78,6 @@ public class ListController {
         List<Business> b = businesses.findByCity("Concord");
         return linearSearch.findOccurrences(categoryName, b);
         
-    }
-
-    /**
-     * Endpoint to find and return a list of businesses with a particular postal code
-     * @param postalCode of businesses to be returned
-     * @return list of businesses with a postal code of postalCode
-     */
-    @GetMapping("/list/categories/{postalCode}")
-    public List<Business> getBusinessesByPostalCode (String postalCode){
-        return businesses.findByPostalCode(postalCode);
     }
 
 }

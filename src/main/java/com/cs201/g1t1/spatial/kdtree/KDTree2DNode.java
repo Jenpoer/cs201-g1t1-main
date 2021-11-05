@@ -92,13 +92,4 @@ public class KDTree2DNode<T extends Dimensional> extends KDTreeNode<T> {
         this.region = region;
     }
 
-    private void utilChecker(double xMin, double yMin, double xMax, double yMax) {
-        logger.info("--------------------------------------------------");
-        logger.info("xMin: " + Double.toString(xMin));
-        logger.info("yMin: " + Double.toString(yMin));
-        logger.info("xMax: " + Double.toString(xMax));
-        logger.info("yMax: " + Double.toString(yMax));
-        logger.info("--------------------------------------------------");
-    }
-
 }

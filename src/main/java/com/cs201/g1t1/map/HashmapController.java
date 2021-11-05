@@ -28,35 +28,37 @@ public class HashmapController {
     // Logger to log information to console
     Logger logger = LoggerFactory.getLogger(HashmapController.class);
 
-
     /**
-     * Endpoint to get the most frequently occuring business category in a particular city
+     * Endpoint to get the most frequently occuring business category in a
+     * particular city
      * 
      * Note: City to be searched is hardcoded in Line 41 for ease of testing
      * 
      * @return name of business category with the highest number of occurances
      */
-    @GetMapping("/hashmap/categories")
-    public String getMostOccurancesCategory(){
+    @GetMapping("/hashmap/most-popular-category")
+    public String getMostOccurancesCategory() {
         String city = "East Point";
         return getMostOccurances(city);
     }
 
     /**
-     * Endpoint to get the most frequently occuring business category in a particular city
+     * Endpoint to get the most frequently occuring business category in a
+     * particular city
+     * 
      * @param city in which to find the most frequently occuring business category
      * @return name of business category with the highest number of occurances
      */
     @GetMapping("/hashmap/categories/{city}")
-    public String getUniqueCategory(@PathVariable (value = "city") String city){
+    public String getUniqueCategory(@PathVariable(value = "city") String city) {
         return getMostOccurances(city);
     }
 
     /**
      * Find the category that occurs the most frequently in a particular city
      * 
-     * @param city all the businesses to be searched belong to 
-     * (done by city to prevent cases of computer hanging)
+     * @param city all the businesses to be searched belong to (done by city to
+     *             prevent cases of computer hanging)
      * 
      * @return the name of the category that occurs the most in given city
      */
@@ -67,8 +69,8 @@ public class HashmapController {
         // Find the total number of categories (will be the number of buckets)
         List<Category> allCategories = categories.findAll();
         int numOfCategories = allCategories.size();
-        
-        ChainHashMap<String,Business> map = new ChainHashMap<String,Business>(numOfCategories); 
+
+        ChainHashMap<String, Business> map = new ChainHashMap<String, Business>(numOfCategories);
 
         ArrayList<String> c = new ArrayList<>();
 
@@ -79,16 +81,16 @@ public class HashmapController {
         Runtime runtime1 = Runtime.getRuntime();
         runtime1.gc();
         long memory1 = runtime1.totalMemory() - runtime1.freeMemory();
-        
+
         // Build HashMap
-        for(Business b : bs){
+        for (Business b : bs) {
             for (Category category : b.getCategories()) {
-                
+
                 // Generate HashCode
                 String cno = category.getCategoryName();
                 int hash = (int) ((Math.abs(cno.hashCode())) % numOfCategories);
                 map.bucketPut(hash, b.getBusinessId(), b);
-                
+
                 if (!c.contains(cno)) {
                     c.add(cno);
                 }
@@ -101,7 +103,7 @@ public class HashmapController {
         runtime2.gc();
         long memory2 = runtime2.totalMemory() - runtime2.freeMemory();
 
-        UnsortedTableMap<String,Business>[] buckets = map.getTable();
+        UnsortedTableMap<String, Business>[] buckets = map.getTable();
 
         // Check for largest bucket (the category with the most occurances)
         int max = 0;
@@ -112,13 +114,13 @@ public class HashmapController {
                 UnsortedTableMap<String, Business> table = buckets[hash];
                 int size = table.size();
 
-                if(size > max){
+                if (size > max) {
                     max = size;
                     result = cno;
                 }
             }
         }
-        
+
         // End Time
         final long endTime = System.currentTimeMillis();
 
@@ -126,46 +128,52 @@ public class HashmapController {
         logger.info("Total execution time: " + (endTime - startTime));
 
         // Log Total Memory Used (converted to kilobytes)
-        logger.info("Memory used: {}KB", (memory2 - memory1)/(1024L));
+        logger.info("Memory used: {}KB", (memory2 - memory1) / (1024L));
 
         // Handle null result
-        if(result == null){
-            String ans = "no reuslt";
+        if (result == null) {
+            String ans = "no result";
             return ans;
         }
 
         return result;
     }
 
-    @GetMapping("/testHashMap")
+    /**
+     * Check number of collisions that occurred Hash function is hard-coded for ease
+     * of testing
+     * 
+     * @return number of collisions caused by that hash function
+     */
+    @GetMapping("/hashmap/collisions")
     public int checkForCollision() {
         List<Category> allCategories = categories.findAll();
-        
+
         Set<Integer> hashCodeSet = new HashSet<Integer>();
 
         int counter = 0;
 
         for (Category category : allCategories) {
             String catName = category.getCategoryName();
-            
+
             // using .hashCode() method
             // int hash = (int) ((Math.abs(cno.hashCode())) % 1330);
 
             // XOR
             // int hash = 0;
             // for (int i = 0 ; i < catName.length() ; i++) {
-            //     hash ^= ((int)catName.charAt(i));
+            // hash ^= ((int)catName.charAt(i));
             // }
 
             // Cyclic Shift
             int hash = 0;
-            for (int i = 0 ; i < catName.length() ; i++) {
+            for (int i = 0; i < catName.length(); i++) {
                 hash = (hash << 5) | (hash >>> 27);
-                hash += ((int)catName.charAt(i));
+                hash += ((int) catName.charAt(i));
             }
 
             hash = Math.abs(hash) % allCategories.size();
-            
+
             if (hashCodeSet.contains(hash)) {
                 logger.info("-------REPEAT-------");
                 counter++;
@@ -177,45 +185,9 @@ public class HashmapController {
 
         }
 
-        logger.info("Number of collisions: {}/1330 = {}%", counter, ((double)counter/(double)1330)*100);
+        logger.info("Number of collisions: {}/1330 = {}%", counter, ((double) counter / (double) 1330) * 100);
 
         return counter;
     }
 
-    /**
-     * Get list of all cities in the dataset
-     * @return list of all cities in the dataset
-     */
-    @GetMapping("/city")
-    public List<String> getCities() {
-        List<String> allCity = businesses.getAllCity();
-        return allCity;
-
-    }
-
-    /**
-     * Find all postal codes in a particular city
-     * 
-     * Note: City is hardcoded for ease of testing
-     * 
-     * @return all postal codes in a particular city
-     */
-    @GetMapping("/postalCode")
-    public List<String> getPostalCode() {
-        List<String> postalCode = businesses.getAllPostalCodesInCity("Austin");
-        return postalCode;
-    }
-
-    /**
-     * Get list of all businesses in a particular city
-     * 
-     * Note: City is hardcoded for ease of testing
-     * 
-     * @return list of all businesses in city
-     */
-    @GetMapping("/businesses")
-    public List<Business> getBusiness() {
-        List<Business> b = businesses.findByCity("Concord");
-        return b;
-    }
 }
