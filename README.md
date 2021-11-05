@@ -30,7 +30,6 @@ DB name: cs201g1t1
 
 3. Click on the Test Connection button to connect to the database server.
 4. Run the application using the command - "mvn spring-boot:run" in your terminal
-5. Test HTTP methods using browser or REST Client 
 
 ### HTTP methods 
 Get the list of all the businesses residing in a particular area identified by its longiture and latitude using a kd-tree and range tree respectively:
@@ -45,4 +44,15 @@ Find the most popular category amonst these businesses using a list and hashmap 
 GET http://localhost:8080/list/categories
 
 GET http://localhost:8080/unique
+
+
+5. Run the app using `yarn start` 
+6. Make sure the backend server (from the cs201-g1t1-yelpdata repository) is also running
+7. Click the "Draw" button on the top left corner to start drawing
+8. Click anywhere on the map to define the **top left corner**, then click anywhere on the map to define the **bottom right corner**
+
+## Current Limitations
+- Code might not follow the conventional best practice
+- Rectangles must be drawn from the top left corner to the bottom right corner
+- Currently only for the city of Kyle
 
