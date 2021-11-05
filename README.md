@@ -21,7 +21,7 @@ Finding the most commonly occuring business category in an area.
 ### Steps
 
 1. Install Maven extension and Spring Boot extensions in IDE
-2. Create a new database connection and enter all the required connection parameters of the AWS MySQL database server. 
+2. Create a new database connection on MySQL Workbench and enter all the required connection parameters of the AWS MySQL database server. 
 
 Host: cs201db.cowijpva0ytl.us-east-1.rds.amazonaws.com
 Port: 3306
@@ -41,7 +41,7 @@ GET http://localhost:8080/range-tree/range-query
 
 Find the most popular category amonst these businesses using a list and hashmap respectively:
 
-GET http://localhost:8080/businesses/popular
+GET http://localhost:8080/list/categories
 
 GET http://localhost:8080/unique
 

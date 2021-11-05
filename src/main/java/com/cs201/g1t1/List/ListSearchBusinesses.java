@@ -32,12 +32,12 @@ public class ListSearchBusinesses {
 
     Logger logger = LoggerFactory.getLogger(ListSearchBusinesses.class);
 
-    @GetMapping("businesses/{postalCode}")
+    @GetMapping("list/categories/{postalCode}")
     public List<Business> getBusinessesByPostalCode (String postalCode){
         return businesses.findByPostalCode(postalCode);
     }
 
-    @GetMapping("/businesses/popular")
+    @GetMapping("list/categories")
     public Category getMostPopularCategory(){
         List<Business> b = businesses.findByCity("Titusville");
 
@@ -69,7 +69,7 @@ public class ListSearchBusinesses {
         return mostPopularBusiness;
     }
 
-    @GetMapping("/businesses/category/{categoryName}")
+    @GetMapping("/list/categories/{categoryName}")
     public int getNumberOfOccurences (@PathVariable (value = "categoryName") String categoryName){
         
         List<Business> b = businesses.findByCity("Concord");
