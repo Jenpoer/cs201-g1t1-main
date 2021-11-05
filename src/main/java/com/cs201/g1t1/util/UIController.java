@@ -4,7 +4,7 @@ import com.cs201.g1t1.repository.BusinessRepository;
 import com.cs201.g1t1.spatial.*;
 import com.cs201.g1t1.spatial.kdtree.*;
 import com.cs201.g1t1.spatial.rangetree.RangeTree;
-import com.cs201.g1t1.array.LinearSearch;
+import com.cs201.g1t1.List.LinearSearch;
 import com.cs201.g1t1.map.ChainHashMap;
 import com.cs201.g1t1.map.UnsortedTableMap;
 import com.cs201.g1t1.model.*;

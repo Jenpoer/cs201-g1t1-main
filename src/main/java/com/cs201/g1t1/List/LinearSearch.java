@@ -1,4 +1,4 @@
-package com.cs201.g1t1.array;
+package com.cs201.g1t1.List;
 
 import java.util.*;
 import com.cs201.g1t1.model.Business;
@@ -42,8 +42,8 @@ public class LinearSearch {
      * @param businesses list of businesses to search
      * @return the number of businesses in the list that are of the category categoryName
      */
-    public int findOccurences (String categoryName, List <Business> businesses){
-        int occurences = 0;
+    public int findOccurrences (String categoryName, List <Business> businesses){
+        int occurrences = 0;
 
         List <Category> categories;
 
@@ -51,11 +51,11 @@ public class LinearSearch {
              categories = new ArrayList <Category> (businesses.get(i).getCategories());
             for (int j = 0; j < categories.size(); j++){
                 if (categories.get(j).getCategoryName().equals(categoryName)){
-                    occurences++;
+                    occurrences++;
                 }
             }
         }
-        return occurences;
+        return occurrences;
     }
 
     /**

@@ -1,4 +1,4 @@
-package com.cs201.g1t1.array;
+package com.cs201.g1t1.List;
 
 import com.cs201.g1t1.repository.BusinessRepository;
 import com.cs201.g1t1.repository.CategoryRepository;
@@ -22,7 +22,7 @@ import java.util.ArrayList;
 
 
 @RestController
-public class ArrayController {
+public class ListSearchBusinesses {
 
     @Autowired
     private BusinessRepository businesses;
@@ -30,13 +30,7 @@ public class ArrayController {
     @Autowired
     private LinearSearch linearSearch;
 
-    @Autowired 
-    private Hashmap hashmap;
-
-    @Autowired 
-    private CategoryRepository categories;
-
-    Logger logger = LoggerFactory.getLogger(ArrayController.class);
+    Logger logger = LoggerFactory.getLogger(ListSearchBusinesses.class);
 
     @GetMapping("businesses/{postalCode}")
     public List<Business> getBusinessesByPostalCode (String postalCode){
@@ -79,7 +73,7 @@ public class ArrayController {
     public int getNumberOfOccurences (@PathVariable (value = "categoryName") String categoryName){
         
         List<Business> b = businesses.findByCity("Concord");
-        return linearSearch.findOccurences(categoryName, b);
+        return linearSearch.findOccurrences(categoryName, b);
         
     }
 
