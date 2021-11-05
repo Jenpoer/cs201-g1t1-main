@@ -18,25 +18,37 @@ import java.util.ArrayList;
 import java.util.HashSet;
 
 @RestController
-public class Hashmap {
+public class HashmapController {
     @Autowired
     private BusinessRepository businesses;
 
     @Autowired
     private CategoryRepository categories;
 
-    Logger logger = LoggerFactory.getLogger(Hashmap.class);
+    // Logger to log information to console
+    Logger logger = LoggerFactory.getLogger(HashmapController.class);
 
-    @GetMapping("/unique/{city}")
-    public String getUniqueCategory(@PathVariable (value = "city") String city){
+
+    /**
+     * Endpoint to get the most frequently occuring business category in a particular city
+     * 
+     * Note: City to be searched is hardcoded in Line 41 for ease of testing
+     * 
+     * @return name of business category with the highest number of occurances
+     */
+    @GetMapping("/hashmap/categories")
+    public String getMostOccurancesCategory(){
+        String city = "East Point";
         return getMostOccurances(city);
     }
-    
-    // Hardcode the starting city for ease of testing
-    @GetMapping("/unique")
-    public String getUniqueCategory(){
-        String city = "East Point";
-        
+
+    /**
+     * Endpoint to get the most frequently occuring business category in a particular city
+     * @param city in which to find the most frequently occuring business category
+     * @return name of business category with the highest number of occurances
+     */
+    @GetMapping("/hashmap/categories/{city}")
+    public String getUniqueCategory(@PathVariable (value = "city") String city){
         return getMostOccurances(city);
     }
 
@@ -44,7 +56,7 @@ public class Hashmap {
      * Find the category that occurs the most frequently in a particular city
      * 
      * @param city all the businesses to be searched belong to 
-     * (done by city to prevent computer hanging)
+     * (done by city to prevent cases of computer hanging)
      * 
      * @return the name of the category that occurs the most in given city
      */
@@ -170,6 +182,10 @@ public class Hashmap {
         return counter;
     }
 
+    /**
+     * Get list of all cities in the dataset
+     * @return list of all cities in the dataset
+     */
     @GetMapping("/city")
     public List<String> getCities() {
         List<String> allCity = businesses.getAllCity();
@@ -177,12 +193,26 @@ public class Hashmap {
 
     }
 
+    /**
+     * Find all postal codes in a particular city
+     * 
+     * Note: City is hardcoded for ease of testing
+     * 
+     * @return all postal codes in a particular city
+     */
     @GetMapping("/postalCode")
     public List<String> getPostalCode() {
-        List<String> postalCode = businesses.getAllPostalCode("Austin");
+        List<String> postalCode = businesses.getAllPostalCodesInCity("Austin");
         return postalCode;
     }
 
+    /**
+     * Get list of all businesses in a particular city
+     * 
+     * Note: City is hardcoded for ease of testing
+     * 
+     * @return list of all businesses in city
+     */
     @GetMapping("/businesses")
     public List<Business> getBusiness() {
         List<Business> b = businesses.findByCity("Concord");

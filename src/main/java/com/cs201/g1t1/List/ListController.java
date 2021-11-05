@@ -1,28 +1,20 @@
-package com.cs201.g1t1.List;
+package com.cs201.g1t1.list;
 
 import com.cs201.g1t1.repository.BusinessRepository;
-import com.cs201.g1t1.repository.CategoryRepository;
-import com.cs201.g1t1.map.*;
 
 import java.util.List;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.ResponseEntity;
-import org.springframework.boot.CommandLineRunner;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
 import com.cs201.g1t1.model.Business;
 import com.cs201.g1t1.model.Category;
-import java.util.Iterator;
-import java.util.ArrayList;
-
-
 
 @RestController
-public class ListSearchBusinesses {
+public class ListController {
 
     @Autowired
     private BusinessRepository businesses;
@@ -30,14 +22,17 @@ public class ListSearchBusinesses {
     @Autowired
     private LinearSearch linearSearch;
 
-    Logger logger = LoggerFactory.getLogger(ListSearchBusinesses.class);
+    // Logger to log information to console
+    Logger logger = LoggerFactory.getLogger(ListController.class);
 
-    @GetMapping("list/categories/{postalCode}")
-    public List<Business> getBusinessesByPostalCode (String postalCode){
-        return businesses.findByPostalCode(postalCode);
-    }
-
-    @GetMapping("list/categories")
+    /**
+     * Endpoint to get the most frequently occuring business category in a particular city
+     * 
+     * Note: City to be searched is hardcoded in Line 43 for ease of testing
+     * 
+     * @return name of business category with the highest number of occurances
+     */
+    @GetMapping("/list/categories")
     public Category getMostPopularCategory(){
         List<Business> b = businesses.findByCity("Titusville");
 
@@ -50,7 +45,7 @@ public class ListSearchBusinesses {
         long memory1 = runtime1.totalMemory() - runtime1.freeMemory();
         
         // Function Call
-        Category mostPopularBusiness = linearSearch.findMostPopularCategory(b);
+        Category mostPopularCategory = linearSearch.findMostPopularCategory(b);
         
         // Save ending Runtime
         Runtime runtime2 = Runtime.getRuntime();
@@ -66,15 +61,33 @@ public class ListSearchBusinesses {
         // Log Total Memory Used (converted to kilobytes)
         logger.info("Memory used: {}KB", (memory2 - memory1)/(1024L));
 
-        return mostPopularBusiness;
+        return mostPopularCategory;
     }
 
+    /**
+     * Endpoint to find the number of occurances of a particular category in a particular city
+     * 
+     * Note: City to be searched is hardcoded in Line 84 for ease of testing
+     * 
+     * @param categoryName to return the number of occurances of
+     * @return the number of occurances of categoryName
+     */
     @GetMapping("/list/categories/{categoryName}")
     public int getNumberOfOccurences (@PathVariable (value = "categoryName") String categoryName){
         
         List<Business> b = businesses.findByCity("Concord");
         return linearSearch.findOccurrences(categoryName, b);
         
+    }
+
+    /**
+     * Endpoint to find and return a list of businesses with a particular postal code
+     * @param postalCode of businesses to be returned
+     * @return list of businesses with a postal code of postalCode
+     */
+    @GetMapping("/list/categories/{postalCode}")
+    public List<Business> getBusinessesByPostalCode (String postalCode){
+        return businesses.findByPostalCode(postalCode);
     }
 
 }

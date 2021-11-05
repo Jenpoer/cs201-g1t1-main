@@ -4,7 +4,7 @@ import com.cs201.g1t1.repository.BusinessRepository;
 import com.cs201.g1t1.spatial.*;
 import com.cs201.g1t1.spatial.kdtree.*;
 import com.cs201.g1t1.spatial.rangetree.RangeTree;
-import com.cs201.g1t1.List.LinearSearch;
+import com.cs201.g1t1.list.LinearSearch;
 import com.cs201.g1t1.map.ChainHashMap;
 import com.cs201.g1t1.map.UnsortedTableMap;
 import com.cs201.g1t1.model.*;
@@ -23,30 +23,23 @@ public class UIController {
     @Autowired
     private LinearSearch linearSearch;
 
+    /**
+     * Endpoint to get all businesses in the city Kyle
+     * @return all businesses in the city Kyle
+     */
     @GetMapping("/api/kyle")
     public List<Business> getBusinessesInKyle() {
         return businessRepository.findByCity("Kyle");
     }
 
-    @GetMapping("/api/kd-tree/hashmap")
-    public AlgoResult findMostPopularCategoryKDHash(@RequestParam Double xMin, @RequestParam Double xMax,
-            @RequestParam Double yMin, @RequestParam Double yMax) {
-        Double[] pointMin = { xMin, yMin };
-        Double[] pointMax = { xMax, yMax };
-        Rectangle range = new Rectangle(pointMin, pointMax);
-
-        final long startRangeSearchTime = System.currentTimeMillis();
-        List<Business> business = searchBusinessesWithKDTree("Kyle", range);
-        final long endRangeSearchTime = System.currentTimeMillis();
-        final long rangeSearchTime = endRangeSearchTime - startRangeSearchTime;
-
-        final long startCategorySearchTime = System.currentTimeMillis();
-        String categoryName = getUniqueCategoryWithHashMap(business);
-        final long endCategorySearchTime = System.currentTimeMillis();
-        final long categorySearchTime = endCategorySearchTime - startCategorySearchTime;
-        return new AlgoResult(categoryName, rangeSearchTime, categorySearchTime);
-    }
-
+    /**
+     * Endpoint to find the most frequently occuring business category in Kyle using kd-tree and list
+     * @param xMin x coordinate of bottom left corner of area to be selected
+     * @param xMax x coordinate of top right corner of area to be selected
+     * @param yMin y coordinate of bottom left corner of area to be selected
+     * @param yMax y coordinate of top right corner of area to be selected
+     * @return name of most frequently occuring business category in selected area, kd-tree search time, list search time
+     */
     @GetMapping("/api/kd-tree/list")
     public AlgoResult findMostPopularCategoryKDList(@RequestParam Double xMin, @RequestParam Double xMax,
             @RequestParam Double yMin, @RequestParam Double yMax) {
@@ -67,6 +60,41 @@ public class UIController {
         return new AlgoResult(categoryName, rangeSearchTime, categorySearchTime);
     }
 
+    /**
+     * Endpoint to find the most frequently occuring business category in Kyle using kd-tree and hashmap
+     * @param xMin x coordinate of bottom left corner of area to be selected
+     * @param xMax x coordinate of top right corner of area to be selected
+     * @param yMin y coordinate of bottom left corner of area to be selected
+     * @param yMax y coordinate of top right corner of area to be selected
+     * @return name of most frequently occuring business category in selected area, kd-tree search time, hashmap search time
+     */
+    @GetMapping("/api/kd-tree/hashmap")
+    public AlgoResult findMostPopularCategoryKDHash(@RequestParam Double xMin, @RequestParam Double xMax,
+            @RequestParam Double yMin, @RequestParam Double yMax) {
+        Double[] pointMin = { xMin, yMin };
+        Double[] pointMax = { xMax, yMax };
+        Rectangle range = new Rectangle(pointMin, pointMax);
+
+        final long startRangeSearchTime = System.currentTimeMillis();
+        List<Business> business = searchBusinessesWithKDTree("Kyle", range);
+        final long endRangeSearchTime = System.currentTimeMillis();
+        final long rangeSearchTime = endRangeSearchTime - startRangeSearchTime;
+
+        final long startCategorySearchTime = System.currentTimeMillis();
+        String categoryName = getUniqueCategoryWithHashMap(business);
+        final long endCategorySearchTime = System.currentTimeMillis();
+        final long categorySearchTime = endCategorySearchTime - startCategorySearchTime;
+        return new AlgoResult(categoryName, rangeSearchTime, categorySearchTime);
+    }
+
+    /**
+     * Endpoint to find the most frequently occuring business category in Kyle using range tree and list
+     * @param xMin x coordinate of bottom left corner of area to be selected
+     * @param xMax x coordinate of top right corner of area to be selected
+     * @param yMin y coordinate of bottom left corner of area to be selected
+     * @param yMax y coordinate of top right corner of area to be selected
+     * @return name of most frequently occuring business category in selected area, range tree search time, list search time
+     */
     @GetMapping("/api/range-tree/list")
     public AlgoResult findMostPopularCategoryRangeList(@RequestParam Double xMin, @RequestParam Double xMax,
             @RequestParam Double yMin, @RequestParam Double yMax) {
@@ -86,6 +114,14 @@ public class UIController {
         return new AlgoResult(categoryName, rangeSearchTime, categorySearchTime);
     }
 
+    /**
+     * Endpoint to find the most frequently occuring business category in Kyle using range tree and hashmap
+     * @param xMin x coordinate of bottom left corner of area to be selected
+     * @param xMax x coordinate of top right corner of area to be selected
+     * @param yMin y coordinate of bottom left corner of area to be selected
+     * @param yMax y coordinate of top right corner of area to be selected
+     * @return name of most frequently occuring business category in selected area, range tree search time, hashmap search time
+     */
     @GetMapping("/api/range-tree/hashmap")
     public AlgoResult findMostPopularCategoryRangeHash(@RequestParam Double xMin, @RequestParam Double xMax,
             @RequestParam Double yMin, @RequestParam Double yMax) {
@@ -106,6 +142,12 @@ public class UIController {
         return new AlgoResult(categoryName, rangeSearchTime, categorySearchTime);
     }
 
+    /**
+     * Get the list of businesses within a specified range with KD-Tree
+     * @param cityName of city area to be searched is in
+     * @param range return businesses if inside range (based on coordinates/longitude&latitude)
+     * @return list of businesses within range
+     */
     private List<Business> searchBusinessesWithKDTree(String cityName, Rectangle range) {
         List<Business> businessesInCity = businessRepository.findByCity(cityName);
 
@@ -127,9 +169,39 @@ public class UIController {
         return toReturn;
     }
 
+    /**
+     * Get the list of businesses within a specified range with Range Tree
+     * @param cityName of city area to be searched is in
+     * @param range return businesses if inside range (based on coordinates/longitude&latitude)
+     * @return list of businesses within range
+     */
+    private List<Business> searchBusinessesWithRangeTree(String cityName, Rectangle range) {
+        List<Business> businessesInCity = businessRepository.findByCity(cityName);
+
+        List<BusinessGeo> geoLocations = new ArrayList<>();
+        businessesInCity.forEach(i -> geoLocations.add(new BusinessGeo(i)));
+
+        RangeTree<BusinessGeo> rangeTree = new RangeTree<>(0);
+        rangeTree.construct(geoLocations);
+
+        Set<BusinessGeo> nn = rangeTree.rangeQuery(range);
+
+        List<Business> toReturn = new ArrayList<>();
+
+        nn.forEach(i -> {
+            toReturn.add(i.getBusiness());
+        });
+
+        return toReturn;
+    }
+
+    /**
+     * Get the most frequently occuring business category with hashmap
+     * @param bs list of businesses to be searched
+     * @return name of most frequently occuring business category
+     */
     private String getUniqueCategoryWithHashMap(List<Business> bs) {
-        ChainHashMap<String, Business> map = new ChainHashMap<String, Business>(1330); // should get the category size
-                                                                                       // from the repositry
+        ChainHashMap<String, Business> map = new ChainHashMap<String, Business>(1330);
         ArrayList<String> c = new ArrayList<>();
 
         for (Business b : bs) {
@@ -146,6 +218,7 @@ public class UIController {
             }
 
         }
+
         UnsortedTableMap<String, Business>[] buckets = map.getTable();
         int max = 0;
         String result = null;
@@ -165,28 +238,13 @@ public class UIController {
         return result;
     }
 
+    /**
+     * Get most frequently occuring business category with list
+     * @param b list of businesses to be searched
+     * @return name of most frequently occuring business category
+     */
     private String getUniqueCategoryWithList(List<Business> b) {
         Category mostPopularBusiness = linearSearch.findMostPopularCategory(b);
         return mostPopularBusiness.getCategoryName();
-    }
-
-    private List<Business> searchBusinessesWithRangeTree(String cityName, Rectangle range) {
-        List<Business> businessesInCity = businessRepository.findByCity(cityName);
-
-        List<BusinessGeo> geoLocations = new ArrayList<>();
-        businessesInCity.forEach(i -> geoLocations.add(new BusinessGeo(i)));
-
-        RangeTree<BusinessGeo> rangeTree = new RangeTree<>(0);
-        rangeTree.construct(geoLocations);
-
-        Set<BusinessGeo> nn = rangeTree.rangeQuery(range);
-
-        List<Business> toReturn = new ArrayList<>();
-
-        nn.forEach(i -> {
-            toReturn.add(i.getBusiness());
-        });
-
-        return toReturn;
     }
 }

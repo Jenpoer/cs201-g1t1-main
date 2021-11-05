@@ -1,4 +1,4 @@
-package com.cs201.g1t1.List;
+package com.cs201.g1t1.list;
 
 import java.util.*;
 import com.cs201.g1t1.model.Business;
