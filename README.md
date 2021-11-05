@@ -26,7 +26,9 @@ Finding the most commonly occuring business category in an area.
 
 Host: cs201db.cowijpva0ytl.us-east-1.rds.amazonaws.com<br/>
 Port: 3306<br/>
-DB name: cs201g1t1
+DB name: cs201g1t1<br/>
+Username: admin<br/>
+Password: password
 
 3. Click on the Test Connection button to connect to the database server.
 4. Run the application using the command - "mvn spring-boot:run" in your terminal
