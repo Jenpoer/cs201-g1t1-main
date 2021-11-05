@@ -31,7 +31,7 @@ DB name: cs201g1t1
 3. Click on the Test Connection button to connect to the database server.
 4. Run the application using the command - "mvn spring-boot:run" in your terminal
 
-### HTTP methods 
+#### HTTP methods 
 Get the list of all the businesses residing in a particular area identified by its longiture and latitude using a kd-tree and range tree respectively:
 
 GET http://localhost:8080/kd-tree/range-query
