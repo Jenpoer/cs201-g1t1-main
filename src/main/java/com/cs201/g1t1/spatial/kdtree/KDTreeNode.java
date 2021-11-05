@@ -5,6 +5,10 @@ import java.util.Arrays;
 import com.cs201.g1t1.spatial.Dimensional;
 import com.cs201.g1t1.spatial.Node;
 
+/**
+ * Class for nodes of KD-tree in any dimension Specific dimension nodes should
+ * extend this class (e.g. see KDTree2DNode)
+ */
 public class KDTreeNode<T extends Dimensional> implements Dimensional, Node<T> {
 
     private KDTreeNode<T> parentNode;
@@ -21,7 +25,8 @@ public class KDTreeNode<T extends Dimensional> implements Dimensional, Node<T> {
         this.element = element;
     }
 
-    public KDTreeNode(KDTreeNode<T> parentNode, KDTreeNode<T> leftNode, KDTreeNode<T> rightNode, T element, int depth, int axis) {
+    public KDTreeNode(KDTreeNode<T> parentNode, KDTreeNode<T> leftNode, KDTreeNode<T> rightNode, T element, int depth,
+            int axis) {
         this.parentNode = parentNode;
         this.leftNode = leftNode;
         this.rightNode = rightNode;

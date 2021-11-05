@@ -2,6 +2,9 @@ package com.cs201.g1t1.spatial;
 
 import com.cs201.g1t1.model.Business;
 
+/**
+ * Wrapper class that wraps a business object as a dimensional
+ */
 public class BusinessGeo implements Dimensional {
 
     private Business business;

@@ -1,10 +1,16 @@
-// REFERENCE: https://www.javatips.net/api/algs4-master/src/main/java/edu/princeton/cs/algs4/RectHV.java
+/*
+ * REFERENCES: 
+ * https://www.javatips.net/api/algs4-master/src/main/java/edu/princeton/cs/algs4/RectHV.java
+ */
 
 package com.cs201.g1t1.spatial;
 
 import java.util.List;
 import org.slf4j.*;
 
+/**
+ * Rectangle class to represent regions
+ */
 public class Rectangle {
     private final double xMin;
     private final double yMin;
@@ -68,10 +74,22 @@ public class Rectangle {
         return yMax - yMin;
     }
 
+    /**
+     * Method to check if a rectangle intersects another rectangle
+     * 
+     * @param that the other rectangle
+     * @return true if intersect, false if not
+     */
     public boolean intersects(Rectangle that) {
         return this.xMin <= that.xMax && this.xMax >= that.xMin && this.yMax >= that.yMin && this.yMin <= that.yMax;
     }
 
+    /**
+     * Method to check if a rectangle is fully contained in another rectangle
+     * 
+     * @param that the other rectangle
+     * @return true if intersect, false if not
+     */
     public boolean contains(Rectangle that) {
         Double[] thatMinPoint = { that.xMin, that.yMin };
         Double[] thatMaxPoint = { that.xMax, that.yMax };

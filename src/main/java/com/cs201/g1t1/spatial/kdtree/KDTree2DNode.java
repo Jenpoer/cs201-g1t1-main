@@ -5,6 +5,9 @@ import com.cs201.g1t1.spatial.Rectangle;
 
 import org.slf4j.*;
 
+/**
+ * Class for node of 2D-Tree
+ */
 public class KDTree2DNode<T extends Dimensional> extends KDTreeNode<T> {
 
     private Rectangle region;
@@ -35,6 +38,12 @@ public class KDTree2DNode<T extends Dimensional> extends KDTreeNode<T> {
         return this.region;
     }
 
+    /**
+     * Method that looks at split nodes and updates their region
+     * 
+     * @param child       child of the node
+     * @param isLeftChild if child is a left child
+     */
     private void split(KDTree2DNode<T> child, boolean isLeftChild) {
         if (super.getAxis() == 0) {
             if (isLeftChild) {
@@ -48,24 +57,37 @@ public class KDTree2DNode<T extends Dimensional> extends KDTreeNode<T> {
             }
         } else {
             if (isLeftChild) {
-                // Bound the top(?) part
+                // Bound the top part
                 child.region = new Rectangle(this.region.getXMin(), this.region.getYMin(), this.region.getXMax(),
                         this.getCoords()[1]);
 
             } else {
-                // Bound the bottom(?) part
+                // Bound the bottom part
                 child.region = new Rectangle(this.region.getXMin(), this.getCoords()[1], this.region.getXMax(),
                         this.region.getYMax());
             }
         }
     }
 
+    /**
+     * Wrapper method to convert KDTreeNode into KDTree2DNode, but allows null
+     * 
+     * @param node KDTreeNode
+     * @return node casted into KDTree2DNode
+     */
     private KDTree2DNode<T> validateAllowNull(KDTreeNode<T> node) {
         if (node == null)
             return null;
         return validate(node);
     }
 
+    /**
+     * Wrapper method to convert KDTreeNode into KDTree2DNode, but does NOT allow
+     * null
+     * 
+     * @param node KDTreeNode
+     * @return node casted into KDTree2DNode
+     */
     private KDTree2DNode<T> validate(KDTreeNode<T> node) {
         if (node == null) {
             throw new IllegalArgumentException("Node must not be null");
@@ -75,6 +97,9 @@ public class KDTree2DNode<T extends Dimensional> extends KDTreeNode<T> {
         return (KDTree2DNode<T>) node;
     }
 
+    /**
+     * Method to update region
+     */
     protected void specialUpdateRectangle() {
         KDTree2DNode<T> left = validateAllowNull(super.getLeftNode());
         KDTree2DNode<T> right = validateAllowNull(super.getRightNode());

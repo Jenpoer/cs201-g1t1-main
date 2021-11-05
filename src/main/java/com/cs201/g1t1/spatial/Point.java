@@ -1,5 +1,8 @@
 package com.cs201.g1t1.spatial;
 
+/**
+ * Simple 2D point class
+ */
 public class Point implements Dimensional {
     private Double[] coords;
 

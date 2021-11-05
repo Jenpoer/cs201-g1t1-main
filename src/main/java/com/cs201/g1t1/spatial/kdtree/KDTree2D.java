@@ -1,3 +1,9 @@
+/*
+ * REFERENCES: 
+ * https://github.com/stanislav-antonov/kdtree/blob/master/src/pse/KdTree.java
+ * http://www.cs.utah.edu/~lifeifei/cis5930/kdtree.pdf
+ */
+
 package com.cs201.g1t1.spatial.kdtree;
 
 import java.util.Collections;
@@ -11,6 +17,9 @@ import com.cs201.g1t1.spatial.Rectangle;
 
 import org.slf4j.*;
 
+/**
+ * Class for 2D KD-tree (or kd-tree with k = 2), extends abstract class KDTree
+ */
 public class KDTree2D extends KDTree {
 
     Logger logger = LoggerFactory.getLogger(KDTree2D.class);
@@ -26,6 +35,12 @@ public class KDTree2D extends KDTree {
         return validateNode(node);
     }
 
+    /**
+     * Utility method: converts KDTreeNode to KDTree2DNode if valid
+     * 
+     * @param node KDTreeNode
+     * @return node casted to KDTree2DNode
+     */
     private KDTree2DNode<? extends Dimensional> validateNode(KDTreeNode node) {
         if (node == null) {
             throw new IllegalArgumentException("Node must not be null");
@@ -35,12 +50,24 @@ public class KDTree2D extends KDTree {
         return (KDTree2DNode<?>) node;
     }
 
+    /**
+     * Method to update the regions contained by every node.
+     * 
+     * Calls specialUpdateRectangle because it is a 2D tree, therefore region is a
+     * rectangle
+     */
     @Override
     protected void updateRegions() {
         KDTree2DNode root = validateNode(super.getRoot());
         root.specialUpdateRectangle();
     }
 
+    /**
+     * Wrapper method to do rangeQuery, called by most functions
+     * 
+     * @param range rectangle object denoting range to search for
+     * @return set of KDTree2DNode's that lie within the range
+     */
     public Set<KDTree2DNode<? extends Dimensional>> rangeQuery(Rectangle range) {
         Set<KDTree2DNode<? extends Dimensional>> found = new HashSet<>();
         rangeQuery(range, validateNode(super.getRoot()), found);
@@ -48,6 +75,13 @@ public class KDTree2D extends KDTree {
 
     }
 
+    /**
+     * Recursive method to do rangeQuery
+     * 
+     * @param range rectangle object denoting range to search for
+     * @param node  current node being searched
+     * @param found set to add nodes that are found to
+     */
     public void rangeQuery(Rectangle range, KDTree2DNode<? extends Dimensional> node,
             Set<KDTree2DNode<? extends Dimensional>> found) {
 
@@ -83,12 +117,24 @@ public class KDTree2D extends KDTree {
         }
     }
 
+    /**
+     * Wrapper method to report a subtree rooted at a certain node
+     * 
+     * @param startNode root of subtree
+     * @return set of KDTree2DNode's of the subtree
+     */
     public Set<KDTree2DNode<? extends Dimensional>> reportSubtree(KDTree2DNode<? extends Dimensional> startNode) {
         Set<KDTree2DNode<? extends Dimensional>> snapshot = new HashSet<>();
         inorderTraversal(startNode, snapshot);
         return snapshot;
     }
 
+    /**
+     * Utility method to do inorder traversal and adding nodes into a snapshot
+     * 
+     * @param node     current node being visited
+     * @param snapshot set of found nodes
+     */
     private void inorderTraversal(KDTree2DNode<? extends Dimensional> node,
             Set<KDTree2DNode<? extends Dimensional>> snapshot) {
         if (node == null) {
@@ -101,6 +147,9 @@ public class KDTree2D extends KDTree {
     }
 
     // ----------------- NESTED COMPARATOR CLASS -----------------
+    /**
+     * Comparator class for location
+     */
     private static class LocationComparator implements Comparator<Dimensional> {
         private final int axis;
 
@@ -116,12 +165,24 @@ public class KDTree2D extends KDTree {
     }
 
     // ------------- END OF NESTED COMPARATOR CLASS -------------
+
+    /**
+     * Wrapper method to construct a 2D-tree, updates regions after building the
+     * whole tree
+     */
     @Override
     public void build(List<? extends Dimensional> points) {
         super.setRoot(buildRecursive(points, 0));
         updateRegions();
     }
 
+    /**
+     * Recursive method to build the tree
+     * 
+     * @param items points to add into the tree
+     * @param depth current depth
+     * @return node added into the tree
+     */
     private KDTree2DNode<? extends Dimensional> buildRecursive(List<? extends Dimensional> items, int depth) {
         if (items.isEmpty()) {
             return null;
@@ -153,6 +214,12 @@ public class KDTree2D extends KDTree {
         return new KDTree2DNode<>(null, leftChild, rightChild, medianPoint, depth, axis);
     }
 
+    /**
+     * Utility method to do pre-order traversal and print out the element of nodes +
+     * their regions
+     * 
+     * @param node node being visited
+     */
     public void preorderTraversal(KDTree2DNode<? extends Dimensional> node) {
         if (node != null) {
             logger.info("*" + node.getElement().getCoords()[0] + "," + node.getElement().getCoords()[1] + "*");

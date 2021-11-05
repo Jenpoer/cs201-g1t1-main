@@ -4,11 +4,15 @@ import java.util.List;
 
 import com.cs201.g1t1.spatial.Dimensional;
 
+/**
+ * Class for nodes of range tree
+ */
 public class RangeNode<T extends Dimensional> implements Dimensional {
 
     private RangeNode left;
     private RangeNode right;
 
+    // Auxiliary tree
     private RangeTree auxTree = null;
 
     private T element;

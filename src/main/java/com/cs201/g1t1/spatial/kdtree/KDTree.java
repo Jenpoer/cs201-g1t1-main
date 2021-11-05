@@ -1,5 +1,8 @@
-// REFERENCE: https://github.com/stanislav-antonov/kdtree/blob/master/src/pse/KdTree.java
-// http://www.cs.utah.edu/~lifeifei/cis5930/kdtree.pdf
+/*
+ * REFERENCES: 
+ * https://github.com/stanislav-antonov/kdtree/blob/master/src/pse/KdTree.java
+ * http://www.cs.utah.edu/~lifeifei/cis5930/kdtree.pdf
+ */
 
 package com.cs201.g1t1.spatial.kdtree;
 
@@ -9,6 +12,9 @@ import com.cs201.g1t1.spatial.Dimensional;
 
 import org.slf4j.*;
 
+/**
+ * Abstract class for KD-tree, generalizable to many dimensions
+ */
 public abstract class KDTree {
 
     private KDTreeNode<? extends Dimensional> root;
@@ -33,5 +39,4 @@ public abstract class KDTree {
 
     protected abstract void updateRegions();
 
-    
 }

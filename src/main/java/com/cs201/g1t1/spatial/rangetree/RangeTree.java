@@ -1,4 +1,7 @@
-// REFERENCE: https://github.com/DanialDMQ/RangeTree
+/*
+ * REFERENCES: 
+ * https://github.com/DanialDMQ/RangeTree
+ */
 
 package com.cs201.g1t1.spatial.rangetree;
 
@@ -7,8 +10,9 @@ import java.util.*;
 import com.cs201.g1t1.spatial.Dimensional;
 import com.cs201.g1t1.spatial.Rectangle;
 
-import org.springframework.stereotype.Component;
-
+/**
+ * Class for range tree
+ */
 public class RangeTree<T extends Dimensional> {
 
     private RangeNode root;
@@ -19,6 +23,12 @@ public class RangeTree<T extends Dimensional> {
         this.by = by;
     }
 
+    /**
+     * Wrapper method to construct a tree
+     * 
+     * @param points list of dimensional objects to use as points
+     * @return node to add to tree
+     */
     public RangeNode construct(List<T> points) {
 
         List<T> sorted = new ArrayList<>(points);
@@ -30,6 +40,12 @@ public class RangeTree<T extends Dimensional> {
         return this.root;
     }
 
+    /**
+     * The recursive function to build a tree
+     * 
+     * @param points list of dimensional objects to use as points
+     * @return node to add to tree
+     */
     private RangeNode utilConstructor(List<T> points) {
 
         if (points.size() == 0) {
@@ -93,6 +109,13 @@ public class RangeTree<T extends Dimensional> {
         }
     }
 
+    /**
+     * Method to do range query on range tree
+     * 
+     * @param range rectangle to use as query range (since we assume range tree is
+     *              2D)
+     * @return set of the dimensional objects stored by range tree's nodes
+     */
     public Set<T> rangeQuery(Rectangle range) {
         Set<T> output = new HashSet<>();
 
